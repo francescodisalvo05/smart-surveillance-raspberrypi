@@ -38,6 +38,7 @@ class SignalGenerator:
         audio = tf.convert_to_tensor(audio, dtype=tf.float32)
         return audio
 
+
     def read(self, file_path):
         parts = tf.strings.split(file_path, os.path.sep)
         label = parts[-2]
@@ -62,6 +63,7 @@ class SignalGenerator:
         audio.set_shape([rate])
 
         return audio
+
 
     def get_spectrogram(self, audio):
         stft = tf.signal.stft(audio, frame_length=self.frame_length,
