@@ -1,18 +1,6 @@
-'''
-Areas & Classes:
-* bedroom : speech, alarm, drawer open or close, door, crying, mechanical fan, ringtone
-* bathroom : speech, sink, toilet flush
-* kitchen : speech, alarm, boiling, sink, water tap, microwave oven
-* office : speech, alarm, printer, scissors, computer keyboard, ringtone
-* entrance : speech, doorbell, keys jangling, knock, ringtone
-* workshop : duct tape, hammer, sawing
-'''
-
-# TO DO : Add the remaining classes
-
 ROOM_DICTIONARY = {
 
-    'ALL' : {
+    'all' : {
         'Alarm': 0,
         'Computer_keyboard': 0,
         'Crying_and_sobbing': 0,
@@ -34,7 +22,7 @@ ROOM_DICTIONARY = {
         'Water_tap_and_faucet': 0
     },
 
-    'BEDROOM' : {
+    'bedroom' : {
         'Alarm': 0,
         'Crying_and_sobbing': 0,
         'Door': 0,
