@@ -45,7 +45,7 @@ def main(args):
     # if save model..
     model.save_tf('models_tf/model_test')
 
-    model.save_tflite('models_tflite/model_test.tflite')
+    model.save_tflite('models_tflite/model_test_tflite/model.tflite')
 
     # to do : make inference? 
 
