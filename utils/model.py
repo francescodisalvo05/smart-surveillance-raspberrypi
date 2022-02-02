@@ -20,7 +20,6 @@ class Model():
         self.model = self.set_model(model_name)
 
         # initialize
-        self.model = None
         self.tflite_path = None
         self.model_path = None
 
@@ -32,18 +31,18 @@ class Model():
 
         if self.model_name == "DS-CNN":
 
-            self.model = keras.Sequential([
-                  keras.layers.Conv2D(filters=int(alpha*256), kernel_size=[3, 3], strides=strides, use_bias=False),
+            model = keras.Sequential([
+                  keras.layers.Conv2D(filters=256, kernel_size=[3, 3], strides=strides, use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
                   keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], use_bias=False),
-                  keras.layers.Conv2D(filters=int(alpha*256), kernel_size=[1, 1], strides=[1, 1], use_bias=False),
+                  keras.layers.Conv2D(filters=256, kernel_size=[1, 1], strides=[1, 1], use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
                   keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], use_bias=False),
-                  keras.layers.Conv2D(filters=int(alpha*256), kernel_size=[1, 1], strides=[1, 1], use_bias=False),
+                  keras.layers.Conv2D(filters=256, kernel_size=[1, 1], strides=[1, 1], use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
@@ -52,7 +51,9 @@ class Model():
               ])
 
         else:
-            raise ValueError('{} not implemented'.format(self.model_name))    
+            raise ValueError('{} not implemented'.format(self.model_name))  
+
+        return model  
 
 
     def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs, save_model=False):
