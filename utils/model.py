@@ -17,12 +17,13 @@ class Model():
         self.model_name = model_name
         self.n_classes = n_classes
 
-        self.model = self.set_model(model_name)
-
-        #initialize optimization
+          #initialize optimization
         self.pruning = pruning
         self.alpha = alpha 
 
+        self.model = self.set_model()
+
+      
         # initialize
         self.tflite_path = None
         self.model_path = None
