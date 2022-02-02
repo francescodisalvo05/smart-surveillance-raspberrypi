@@ -12,7 +12,7 @@ from tensorflow import keras
 
 class Model():
 
-    def __init__(self, model_name=None, alpha=1, n_classes=None,pruning=False):
+    def __init__(self, model_name=None, alpha=1, n_classes=None, pruning=False):
 
         self.model_name = model_name
         self.n_classes = n_classes
@@ -62,13 +62,13 @@ class Model():
         return model  
 
 
-    def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs,save_model=False):
+    def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs):
             
         pruning_params = {'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.30,
                                                                                final_sparsity=0.85,
                                                                                begin_step=len(train_ds) * 5,
                                                                                end_step=len(val_ds) * 15)}
-        if self.pruning == True:
+        if self.pruning:
             prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
             model = prune_low_magnitude(self.model,**pruning_params)
             callbacks = [tfmot.sparsity.keras.UpdatePruningStep()]
@@ -78,7 +78,7 @@ class Model():
                         loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                         metrics=keras.metrics.SparseCategoricalAccuracy())
 
-            self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds)   
+            self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds, callbacks=callbacks)   
             model = tfmot.sparsity.keras.strip_pruning(model)
         
         else:
