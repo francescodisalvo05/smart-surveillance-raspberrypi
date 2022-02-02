@@ -16,10 +16,10 @@ def main(args):
     }
 
     labels = [
-    'Speech','Alarm','Drawer_open_or_close','Door','Crying_and_sobbing',
-    'Mechanical_fan', 'Ringtone', 'Sink_(filling_or_washing)', 'Water_tap_and_faucet',
-    'Microwave_oven', 'Printer', 'Scissors', 'Computer_keyboard', 'Doorbell', 'Keys_jangling'
-    'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing'
+        'Speech','Alarm','Drawer_open_or_close','Door','Crying_and_sobbing',
+        'Mechanical_fan', 'Ringtone', 'Sink_(filling_or_washing)', 'Water_tap_and_faucet',
+        'Microwave_oven', 'Printer', 'Scissors', 'Computer_keyboard', 'Doorbell', 'Keys_jangling'
+        'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing'
     ]
 
     train_ds, val_ds = get_data(
@@ -29,11 +29,11 @@ def main(args):
         mfcc_options=MFCC_OPTIONS,
         resampling=None)
 
-    model = Model(model_name='ds-cnn', n_classes=len(labels))
+    model = Model(model_name='DS-CNN', n_classes=len(labels))
 
     learning_rate = 0.01
     epochs = 30
-    input_shape = [32,366,10,1] # ?????
+    input_shape = [32,366,10,1] 
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
@@ -43,9 +43,6 @@ def main(args):
     model.save_tflite('models_tflite/model_test.tflite')
 
     # to do : make inference? 
-
-
-
 
 
 
