@@ -26,15 +26,12 @@ def main(args):
     ]
 
     train_ds, val_ds = get_data(
-        labels = labels, 
-        train_path = args.train_path,
-        test_path=args.test_path,
+        room = args.room,
+        labels = labels,
         mfcc_options=MFCC_OPTIONS,
         resampling=None)
 
     model = Model(model_name='DS-CNN', n_classes=len(labels),alpha=1,pruning=None)
-
-   
 
     learning_rate = 0.01
     epochs = 30
@@ -54,9 +51,8 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('--train_path',type=str, default=None)
-    parser.add_argument('--test_path', type=str, default=None)
+    
+    parser.add_argument('--room', type=str, default='all', choices=['all','bedroom'])
     
     args = parser.parse_args()
 
