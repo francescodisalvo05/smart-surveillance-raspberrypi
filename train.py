@@ -33,7 +33,7 @@ def main(args):
 
     learning_rate = 0.01
     epochs = 30
-    input_shape = [32,1,1] # ?????
+    input_shape = [32,366,10,1] # ?????
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
