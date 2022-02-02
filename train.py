@@ -34,7 +34,7 @@ def main(args):
     model = Model(model_name='DS-CNN', n_classes=len(labels),alpha=1,pruning=None)
 
     learning_rate = 0.01
-    epochs = 30
+    epochs = args.epochs
     input_shape = [32,366,10,1] 
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
@@ -51,8 +51,9 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    
-    parser.add_argument('--room', type=str, default='all', choices=['all','bedroom'])
+
+    parser.add_argument('-r','--room', type=str, default='all', choices=['all','bedroom'])
+    parser.add_argument('-e','--epochs', type=int, default=20)
     
     args = parser.parse_args()
 
