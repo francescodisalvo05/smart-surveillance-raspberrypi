@@ -12,19 +12,23 @@ from tensorflow import keras
 
 class Model():
 
-    def __init__(self, model_name=None, alpha=1, n_classes=None):
+    def __init__(self, model_name=None, alpha=1, n_classes=None,pruning=False):
 
         self.model_name = model_name
         self.n_classes = n_classes
 
         self.model = self.set_model(model_name)
 
+        #initialize optimization
+        self.pruning = pruning
+        self.alpha = alpha 
+
         # initialize
         self.tflite_path = None
         self.model_path = None
 
 
-    def set_model(self,alpha=1): # units = num classes
+    def set_model(self): # units = num classes
         
         strides=[2,1]
         units = self.n_classes
@@ -32,23 +36,24 @@ class Model():
         if self.model_name == "DS-CNN":
 
             model = keras.Sequential([
-                  keras.layers.Conv2D(filters=256, kernel_size=[3, 3], strides=strides, use_bias=False),
+                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[3, 3], strides=strides, use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
                   keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], use_bias=False),
-                  keras.layers.Conv2D(filters=256, kernel_size=[1, 1], strides=[1, 1], use_bias=False),
+                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
                   keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], use_bias=False),
-                  keras.layers.Conv2D(filters=256, kernel_size=[1, 1], strides=[1, 1], use_bias=False),
+                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], use_bias=False),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
                   keras.layers.GlobalAveragePooling2D(),
                   keras.layers.Dense(units=units)
               ])
+              
 
         else:
             raise ValueError('{} not implemented'.format(self.model_name))  
@@ -56,14 +61,32 @@ class Model():
         return model  
 
 
-    def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs, save_model=False):
+    def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs,save_model=False):
             
-        self.model.build(input_shape=input_shape)
-        self.model.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
-                    loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                    metrics=keras.metrics.SparseCategoricalAccuracy())
+        pruning_params = {'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.30,
+                                                                               final_sparsity=0.85,
+                                                                               begin_step=len(train_ds) * 5,
+                                                                               end_step=len(val_ds) * 15)}
+        if self.pruning == True:
+            prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
+            model = prune_low_magnitude(self.model,**pruning_params)
+            callbacks = [tfmot.sparsity.keras.UpdatePruningStep()]
+        
+            self.model.build(input_shape=input_shape)
+            self.model.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
+                        loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                        metrics=keras.metrics.SparseCategoricalAccuracy())
 
-        self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds)   
+            self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds)   
+            model = tfmot.sparsity.keras.strip_pruning(model)
+        
+        else:
+            self.model.build(input_shape=input_shape)
+            self.model.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
+                        loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                        metrics=keras.metrics.SparseCategoricalAccuracy())
+
+            self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds)   
 
 
     def save_tf(self, path=''):
