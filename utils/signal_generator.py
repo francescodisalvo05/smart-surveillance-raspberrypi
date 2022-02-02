@@ -6,7 +6,7 @@ from scipy import signal
 class SignalGenerator:
     def __init__(self, labels, sampling_rate, frame_length, frame_step,
             num_mel_bins=None, lower_frequency=None, upper_frequency=None,
-            num_coefficients=None, mfcc=False, resampling_rate = None):
+            num_coefficients=None, mfcc=False, resampling_rate = None, seconds=4):
 
         self.labels = labels
 
@@ -24,6 +24,8 @@ class SignalGenerator:
 
         num_spectrogram_bins = (frame_length) // 2 + 1
         rate = self.resampling_rate if self.resampling_rate else self.sampling_rate
+
+        self.seconds = seconds
            
         if mfcc is True:
             self.linear_to_mel_weight_matrix = tf.signal.linear_to_mel_weight_matrix(
@@ -54,13 +56,15 @@ class SignalGenerator:
 
 
     def pad(self, audio):
+        
         if self.resampling_rate is not None:
             rate = self.resampling_rate
         else:
             rate = self.sampling_rate
-        zero_padding = tf.zeros([rate] - tf.shape(audio), dtype=tf.float32)
+        
+        zero_padding = tf.zeros([self.seconds * rate] - tf.shape(audio), dtype=tf.float32)
         audio = tf.concat([audio, zero_padding], 0)
-        audio.set_shape([rate])
+        audio.set_shape([self.seconds * rate])
 
         return audio
 
@@ -92,7 +96,18 @@ class SignalGenerator:
 
     def preprocess_with_mfcc(self, file_path):
         audio, label = self.read(file_path)
-        audio = self.pad(audio)
+        
+        if self.resampling_rate is not None:
+            rate = self.resampling_rate
+        else:
+            rate = self.sampling_rate
+
+        if tf.shape(audio) > self.seconds * rate:
+          audio = audio[:self.seconds*rate]
+        else:
+          audio = self.pad(audio)
+
+        
         spectrogram = self.get_spectrogram(audio)
         mfccs = self.get_mfccs(spectrogram)
         mfccs = tf.expand_dims(mfccs, -1)
