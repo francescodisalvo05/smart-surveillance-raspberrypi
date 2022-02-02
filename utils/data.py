@@ -1,11 +1,18 @@
+import sys
+sys.path.append('constants/')
+
+from path import SPLIT_BASE_PATH
+
+
 from utils.signal_generator import SignalGenerator
 
-def get_data(labels, resampling, mfcc_options, train_path, test_path):
 
-    with open('/content/domestic-sounds/assets/train_split_reduced_ds.txt' ,"r") as fp:
-       train_files = [line.rstrip() for line in fp.readlines()]  
+def get_data(room, labels, resampling, mfcc_options):
+
+    with open('{}/train_{}_reduced.txt'.format(SPLIT_BASE_PATH, room) ,"r") as fp:
+       train_files = [line.rstrip() for line in fp.readlines()]
     
-    with open('/content/domestic-sounds/assets/val_split_reduced_ds.txt' ,"r") as fp:
+    with open('{}/val_{}_reduced.txt'.format(SPLIT_BASE_PATH, room) ,"r") as fp:
        val_files = [line.rstrip() for line in fp.readlines()]
 
     generator = SignalGenerator(labels, sampling_rate=44100, resampling_rate=resampling, **mfcc_options)
