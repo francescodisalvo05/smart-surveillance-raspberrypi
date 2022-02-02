@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import os
+import tensorflow_model_optimization as tfmot
 
 from utils.data import get_data
 from utils.model import Model
@@ -14,6 +15,8 @@ def main(args):
         'frame_length': 240, 'frame_step': 120, 'mfcc': True, 'lower_frequency': 20, 
         'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
     }
+
+    
 
     labels = [
         'Speech','Alarm','Drawer_open_or_close','Door','Crying_and_sobbing',
@@ -29,7 +32,9 @@ def main(args):
         mfcc_options=MFCC_OPTIONS,
         resampling=None)
 
-    model = Model(model_name='DS-CNN', n_classes=len(labels))
+    model = Model(model_name='DS-CNN', n_classes=len(labels),alpha=1,pruning=None)
+
+   
 
     learning_rate = 0.01
     epochs = 30
