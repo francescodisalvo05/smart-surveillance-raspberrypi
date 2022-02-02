@@ -103,12 +103,12 @@ class Model():
 
     def save_tflite(self, path='', optimization=None):
         
-        if not os.path.isdir(path):
-            os.mkdir(path)
+        #if not os.path.isdir(path):
+        #    os.mkdir(path)
 
         self.tflite_path = path
 
-        converter = tf.lite.TFLiteConverter.from_saved_model(path)
+        converter = tf.lite.TFLiteConverter.from_saved_model(self.model_path)
         converter.experimental_enable_resource_variables = True
 
         if optimization is not None:
@@ -117,15 +117,10 @@ class Model():
         tflite_m = converter.convert()
 
         # save tflite model
-        with open(path, 'wb') as fp:
+        with open(self.tflite_path, 'wb') as fp:
             fp.write(tflite_m)
 
-        # compress the tflite model and save it
-        TFLITE_PATH_COMPRESSED = path + ".zlib"
-        with open(TFLITE_PATH_COMPRESSED, 'wb') as fp:
-            compressed_tflite_model = zlib.compress(tflite_m, level=9)
-            fp.write(compressed_tflite_model)
-
+       
 
     def make_inference(self, test_ds):
         
