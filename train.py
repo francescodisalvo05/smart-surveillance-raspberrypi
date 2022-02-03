@@ -25,7 +25,7 @@ def main(args):
         'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing'
     ]
 
-    train_ds, val_ds = get_data(
+    train_ds, val_ds ,test_ds= get_data(
         room = args.room,
         labels = labels,
         mfcc_options=MFCC_OPTIONS,
@@ -44,7 +44,9 @@ def main(args):
 
     model.save_tflite('models_tflite/model_test_tflite/model.tflite')
 
-    # to do : make inference? 
+    model.make_inference(test_ds)
+
+    
 
 
 
