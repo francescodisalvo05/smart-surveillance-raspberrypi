@@ -67,7 +67,7 @@ class Model():
         pruning_params = {'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.30,
                                                                                final_sparsity=0.85,
                                                                                begin_step=len(train_ds) * 5,
-                                                                               end_step=len(val_ds) * 15)}
+                                                                               end_step=len(train_ds) * 15)}
         if self.pruning:
             prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
             model = prune_low_magnitude(self.model,**pruning_params)
