@@ -11,7 +11,7 @@ from split import ROOM_DICTIONARY
 DATASET_TRAIN = 'data/Dataset_train/'
 DATASET_TEST = 'data/Dataset_test/'
 
-DATASET_IDX = 'assets/dataset_idx/idx_dev.csv'
+DATASET_IDX = 'assets/dataset_idx/dev_ids.csv'
 DATASET_EVAL_IDX = 'assets/dataset_idx/eval_ids.csv'
 
 # It is based on Google Colab.. Fix it
