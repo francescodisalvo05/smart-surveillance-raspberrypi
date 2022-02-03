@@ -8,7 +8,9 @@ sys.path.append('constants/')
 
 from split import ROOM_DICTIONARY
 
-DATASET = 'data/Dataset/'
+DATASET_TRAIN = 'data/Dataset_train/'
+DATASET_TEST = 'data/Dataset_test/'
+
 DATASET_IDX = 'assets/dataset_idx/idx_dev.csv'
 DATASET_EVAL_IDX = 'assets/dataset_idx/eval_ids.csv'
 
@@ -19,7 +21,7 @@ parser = argparse.ArgumentParser()
 
 # to do: define all the other choices for room
 parser.add_argument('-r','--room',type=str, default='all', choices=['all','bedroom'])
-parser.add_argument('-d','--dataset',type=str, default=DATASET_IDX)
+parser.add_argument('-d','--dataset',type=str, default=DATASET_EVAL_IDX)
 parser.add_argument('-m','--mode',type=str, choices = ['train','val-test'] ,default = 'train')
 
 args = parser.parse_args()
@@ -55,13 +57,13 @@ if args.mode == 'val-test':
   with open(os.path.join(SPLIT_BASE_PATH,TEST_NAME),'w') as file:
 
     for idx in range(len(x_test)):
-      string = './{}/{}/{}.wav\n'.format(DATASET,y_test.iloc[idx], x_test.iloc[idx].fname)
+      string = './{}/{}/{}.wav\n'.format(DATASET_TEST,y_test.iloc[idx], x_test.iloc[idx].fname)
       file.write(string)
 
   with open(os.path.join(SPLIT_BASE_PATH,VALIDATION_NAME),'w') as file:
 
     for idx in range(len(x_val)):
-      string = './{}/{}/{}.wav\n'.format(DATASET, y_val.iloc[idx], x_val.iloc[idx].fname)
+      string = './{}/{}/{}.wav\n'.format(DATASET_TEST, y_val.iloc[idx], x_val.iloc[idx].fname)
       file.write(string)
 
   file.close()
@@ -70,5 +72,5 @@ else:
   with open(os.path.join(SPLIT_BASE_PATH,TRAIN_NAME),'w') as file:
 
     for idx in range(len(X)):
-      string = './{}/{}/{}.wav\n'.format(DATASET,y.iloc[idx], X.iloc[idx].fname)
+      string = './{}/{}/{}.wav\n'.format(DATASET_TRAIN,y.iloc[idx], X.iloc[idx].fname)
       file.write(string)
