@@ -132,7 +132,7 @@ class Model():
 
         test_ds = test_ds.unbatch().batch(1)
 
-        total_count, correct_count = 0, 0
+        predictions, labels = [], []
 
         for x, y in test_ds:
             # give the input
@@ -145,9 +145,9 @@ class Model():
 
             curr_prediction = np.argmax(curr_prediction_logits)
 
-            if curr_prediction == curr_label:
-                correct_count += 1
-            
-            total_count += 1
+            predictions.append(curr_prediction)
+            labels.append(curr_label)
 
-        return correct_count / total_count
+        confusion_matrix = tf.math.confusion_matrix(labels, predictions) # add names!
+
+        return confusion_matrix
