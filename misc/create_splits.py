@@ -20,8 +20,8 @@ SPLIT_BASE_PATH = 'assets/dataset_split'
 parser = argparse.ArgumentParser()
 
 # to do: define all the other choices for room
-parser.add_argument('-r','--room',type=str, default='all', choices=['all','bedroom'])
-parser.add_argument('-d','--dataset',type=str, default=DATASET_EVAL_IDX)
+parser.add_argument('-r','--room',type=str, default='all', choices=['all','bedroom','bathroom','kitchen','office','entrance','workshop'])
+parser.add_argument('-d','--dataset',type=str, default=DATASET_IDX)
 parser.add_argument('-m','--mode',type=str, choices = ['train','val-test'] ,default = 'train')
 
 args = parser.parse_args()
