@@ -30,6 +30,42 @@ ROOM_DICTIONARY = {
         'Mechanical_fan': 0,
         'Ringtone': 0,
         'Speech': 0,
+    },
+    'kitchen' : {
+        'Alarm': 0,
+        'Water_tap_and_faucet': 0,
+        'Microwave_oven': 0,
+        'Sink_(filling_or_washing)': 0,
+        'Speech': 0,
+    },
+    'bathroom' : {
+        'Speech' : 0,
+        'Sink_(filling_or_washing)' : 0,
+        'Water_tap_and_faucet' : 0,
+
+    },
+    'office' : {
+        'Speech' : 0,
+        'Alarm' : 0,
+        'Printer' : 0,
+        'Scissors' : 0,
+        'Computer_keyboard' : 0,
+        'Ringtone' : 0,
+    },
+    'entrance' : {
+        'Speech' : 0,
+        'Doorbell' : 0,
+        'Keys_jangling' : 0,
+        'Knock' : 0,
+        'Ringtone' : 0,
+    },
+    'workshop' : {
+        'Packing_tape_and_duct_tape' : 0,
+        'Hammer' : 0,
+        'Sawing' : 0,
     }
+
+
+
 
 }
