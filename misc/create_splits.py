@@ -7,6 +7,7 @@ import sys
 sys.path.append('constants/')
 
 from split import ROOM_DICTIONARY
+from misc import RANDOM_STATE
 
 DATASET_TRAIN = 'data/Dataset_train/'
 DATASET_TEST = 'data/Dataset_test/'
@@ -52,7 +53,7 @@ y = df_new.label
 X = df_new.drop(columns=['label'])
 
 # split it into train and validation
-x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.10, stratify=y)
+x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.10, stratify=y, random_state=RANDOM_STALE)
 
 with open(os.path.join(SPLIT_BASE_PATH, TRAIN_NAME), 'w') as file:
     for idx in range(len(x_train)):
