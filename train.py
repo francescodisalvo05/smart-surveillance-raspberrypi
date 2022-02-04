@@ -1,6 +1,8 @@
 import argparse
 import numpy as np
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
 import tensorflow_model_optimization as tfmot
 
 from utils.data import get_data
@@ -44,7 +46,12 @@ def main(args):
 
     model.save_tflite('models_tflite/model_test_tflite/model.tflite')
 
-    accuracy = model.make_inference(test_ds)
+    cm = model.make_inference(test_ds)
+
+
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, fmt='g', ax=ax)
+    plt.savefig('heatmap.png')
 
     print(accuracy)
 
