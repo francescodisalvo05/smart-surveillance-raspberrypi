@@ -9,8 +9,8 @@ sys.path.append('constants/')
 from split import ROOM_DICTIONARY
 from misc import RANDOM_STATE
 
-DATASET_TRAIN = 'data/Dataset_train/'
-DATASET_TEST = 'data/Dataset_test/'
+DATASET = 'data/Dataset/'
+
 
 DATASET_DEV_IDX = 'assets/dataset_idx/dev_ids.csv'
 DATASET_EVAL_IDX = 'assets/dataset_idx/eval_ids.csv'
@@ -57,12 +57,12 @@ x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.10, stratify
 
 with open(os.path.join(SPLIT_BASE_PATH, TRAIN_NAME), 'w') as file:
     for idx in range(len(x_train)):
-        string = './{}{}/{}.wav\n'.format(DATASET_TRAIN, y_train.iloc[idx], x_train.iloc[idx].fname)
+        string = './{}{}/{}.wav\n'.format(DATASET, y_train.iloc[idx], x_train.iloc[idx].fname)
         file.write(string)
 
 with open(os.path.join(SPLIT_BASE_PATH, VALIDATION_NAME), 'w') as file:
     for idx in range(len(x_val)):
-        string = './{}{}/{}.wav\n'.format(DATASET_TRAIN, y_val.iloc[idx], x_val.iloc[idx].fname)
+        string = './{}{}/{}.wav\n'.format(DATASET, y_val.iloc[idx], x_val.iloc[idx].fname)
         file.write(string)
 
 file.close()
@@ -78,5 +78,5 @@ X = df_new.drop(columns=['label'])
 
 with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'w') as file:
     for idx in range(len(X)):
-        string = './{}{}/{}.wav\n'.format(DATASET_TRAIN, y.iloc[idx], X.iloc[idx].fname)
+        string = './{}{}/{}.wav\n'.format(DATASET, y.iloc[idx], X.iloc[idx].fname)
         file.write(string)
