@@ -24,7 +24,7 @@ def main(args):
         'Speech','Alarm','Drawer_open_or_close','Door','Crying_and_sobbing',
         'Mechanical_fan', 'Ringtone', 'Sink_(filling_or_washing)', 'Water_tap_and_faucet',
         'Microwave_oven', 'Printer', 'Scissors', 'Computer_keyboard', 'Doorbell', 'Keys_jangling'
-        'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing'
+        'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing', 'Boiling', 'Toilet_flush'
     ]
 
     train_ds, val_ds ,test_ds= get_data(
