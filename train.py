@@ -35,7 +35,7 @@ def main(args):
 
     learning_rate = 0.01
     epochs = args.epochs
-    input_shape = [32,366,10,1] 
+    input_shape = [32,1469,10,1]
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
@@ -44,7 +44,9 @@ def main(args):
 
     model.save_tflite('models_tflite/model_test_tflite/model.tflite')
 
-    model.make_inference(test_ds)
+    accuracy = model.make_inference(test_ds)
+
+    print(accuracy)
 
     
 
