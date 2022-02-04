@@ -53,7 +53,7 @@ y = df_new.label
 X = df_new.drop(columns=['label'])
 
 # split it into train and validation
-x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.10, stratify=y, random_state=RANDOM_STALE)
+x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.10, stratify=y, random_state=RANDOM_STATE)
 
 with open(os.path.join(SPLIT_BASE_PATH, TRAIN_NAME), 'w') as file:
     for idx in range(len(x_train)):
@@ -62,7 +62,7 @@ with open(os.path.join(SPLIT_BASE_PATH, TRAIN_NAME), 'w') as file:
 
 with open(os.path.join(SPLIT_BASE_PATH, VALIDATION_NAME), 'w') as file:
     for idx in range(len(x_val)):
-        string = './{}{}/{}.wav\n'.format(DATASET_TEST, y_val.iloc[idx], x_val.iloc[idx].fname)
+        string = './{}{}/{}.wav\n'.format(DATASET_TRAIN, y_val.iloc[idx], x_val.iloc[idx].fname)
         file.write(string)
 
 file.close()
