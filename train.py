@@ -53,17 +53,14 @@ def main(args):
     sns.heatmap(cm, annot=True, fmt='g', ax=ax)
     plt.savefig('heatmap.png')
 
-    print(accuracy)
-
-    
-
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-r','--room', type=str, default='all', choices=['all','bedroom'])
+    parser.add_argument('-r', '--room', type=str, default='all',
+                        choices=['all', 'bedroom', 'bathroom', 'kitchen', 'office', 'entrance', 'workshop'])
     parser.add_argument('-e','--epochs', type=int, default=20)
     
     args = parser.parse_args()
