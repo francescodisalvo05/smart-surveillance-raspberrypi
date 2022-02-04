@@ -11,15 +11,15 @@ Areas & Classes:
 import csv
 
 
-BASE_PATH = 'assets/dataset_split/'
+BASE_PATH = 'assets/dataset_idx/'
 DATA_FILES = ['dev.csv', 'eval.csv']
 OUTPUT_FOLDER = 'assets/'
 
 unique_classes = [
-    'Speech','Alarm','Drawer_open_or_close','Door','Crying_and_sobbing',
+    'Speech','Alarm','Boiling','Drawer_open_or_close','Door','Crying_and_sobbing',
     'Mechanical_fan', 'Ringtone', 'Sink_(filling_or_washing)', 'Water_tap_and_faucet',
     'Microwave_oven', 'Printer', 'Scissors', 'Computer_keyboard', 'Doorbell', 'Keys_jangling',
-    'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing'
+    'Knock', 'Ringtone', 'Packing_tape_and_duct_tape', 'Hammer', 'Sawing','Toilet_flush'
 ]
 
 ##############################################################################################
