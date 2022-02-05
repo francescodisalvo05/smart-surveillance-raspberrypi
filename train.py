@@ -29,7 +29,7 @@ def main(args):
 
     model = Model(model_name='DS-CNN', n_classes=len(labels), alpha=1, pruning=None)
 
-    learning_rate = 0.01
+    learning_rate = 0.001
     epochs = args.epochs
     input_shape = [32, 1469, 10, 1]
 
@@ -50,6 +50,9 @@ def main(args):
 
     plt.xticks(rotation=90)
     plt.yticks(rotation=0)
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
+    plt.title('Room - {}'.format(args.room))
     plt.tight_layout()
 
     plt.savefig('heatmap.png')
