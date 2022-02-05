@@ -19,9 +19,9 @@ def get_data(room, labels, resampling, mfcc_options):
        test_files = [line.rstrip() for line in fp.readlines()]
 
     generator = SignalGenerator(labels, sampling_rate=44100, resampling_rate=resampling, **mfcc_options)
-    train_ds = generator.make_dataset(train_files, True)
-    val_ds = generator.make_dataset(val_files, False)
-    test_ds = generator.make_dataset(test_files, False)
+    train_ds = generator.make_dataset(train_files, True, True)
+    val_ds = generator.make_dataset(val_files, False, False)
+    test_ds = generator.make_dataset(test_files, False, False)
 
     
     # test_ds = generator.make_dataset(test_files, False)

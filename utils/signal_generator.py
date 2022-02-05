@@ -136,14 +136,14 @@ class SignalGenerator:
                                  name=None)
         return signal + noise * noise_factor
 
-    def make_dataset(self, files, train):
+    def make_dataset(self, files, train, augumentation):
 
         ds = tf.data.Dataset.from_tensor_slices(files)
 
         ds_new = tf.data.Dataset.from_tensor_slices([''])
 
         # duplicate audios for augumentation
-        if train:
+        if augumentation:
             for elem in ds:
                 filename_no_aug = tf.strings.regex_replace(elem, ".wav^", "_no.wav")
                 filename_noise = tf.strings.regex_replace(elem, ".wav^", "_noise.wav")
