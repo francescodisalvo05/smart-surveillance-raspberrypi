@@ -2,6 +2,7 @@ ROOM_DICTIONARY = {
 
     'all' : {
         'Alarm': 0,
+        'Boiling': 0,
         'Computer_keyboard': 0,
         'Crying_and_sobbing': 0,
         'Door': 0,
@@ -19,6 +20,7 @@ ROOM_DICTIONARY = {
         'Scissors': 0,
         'Sink_(filling_or_washing)': 0,
         'Speech': 0,
+        'Toilet_flush' : 0,
         'Water_tap_and_faucet': 0
     },
 
@@ -33,6 +35,7 @@ ROOM_DICTIONARY = {
     },
     'kitchen' : {
         'Alarm': 0,
+        'Boiling': 0,
         'Water_tap_and_faucet': 0,
         'Microwave_oven': 0,
         'Sink_(filling_or_washing)': 0,
@@ -42,6 +45,7 @@ ROOM_DICTIONARY = {
         'Speech' : 0,
         'Sink_(filling_or_washing)' : 0,
         'Water_tap_and_faucet' : 0,
+        'Toilet_flush' : 0
 
     },
     'office' : {
