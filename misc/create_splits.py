@@ -42,7 +42,7 @@ TEST_NAME = 'test_{}_split.txt'.format(args.room)
 # they will be augumented later
 for index, row in df.iterrows():
     if df.loc[index, 'label'] in list(room_dictionary.keys()):
-        if room_dictionary[df.loc[index, 'label']] < 120:
+        if room_dictionary[df.loc[index, 'label']] < 100:
             fnames.append(df.loc[index, 'fname'])
             classes.append(df.loc[index, 'label'])
             room_dictionary[df.loc[index, 'label']] += 1
