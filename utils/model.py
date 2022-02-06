@@ -55,7 +55,34 @@ class Model():
                   keras.layers.Dense(units=units)
               ])
               
+        elif self.model_name == "VGG":
+            model = keras.Sequential([
 
+            # Input shape to be specified 
+                keras.layers.Conv2D(input_shape=(),filters=64,kernel_size=(3,3),padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),  # shapes problem here
+                keras.layers.Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2))
+
+                keras.layers.Flatten(),
+                keras.layers.Dense(units=4096,activation="relu"),
+                keras.layers.Dense(units=4096,activation="relu"),
+                keras.layers.Dense(units=2, activation="softmax")
+            ])
         else:
             raise ValueError('{} not implemented'.format(self.model_name))  
 
