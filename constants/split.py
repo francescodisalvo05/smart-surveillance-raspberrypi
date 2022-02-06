@@ -2,7 +2,7 @@ ROOM_DICTIONARY = {
 
     'all' : {
         'Alarm': 0,
-        'Boiling': 0,
+        #'Boiling': 0,
         'Computer_keyboard': 0,
         'Crying_and_sobbing': 0,
         'Door': 0,
