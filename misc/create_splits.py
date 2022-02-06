@@ -71,10 +71,10 @@ file.close()
 ######### TEST
 ##########################################################
 
-df = pd.read_csv(DATASET_EVAL_IDX, names=['fname', 'label'])
+df_eval = pd.read_csv(DATASET_EVAL_IDX, names=['fname', 'label'])
 
-y = df_new.label
-X = df_new.drop(columns=['label'])
+y = df_eval.label
+X = df_eval.drop(columns=['label'])
 
 with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'w') as file:
     for idx in range(len(X)):
