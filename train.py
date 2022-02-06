@@ -61,7 +61,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-r', '--room', type=str, default='all', choices=['all', 'bedroom'])
+    parser.add_argument('-r', '--room', type=str, default='all', choices=['all', 'bedroom','kitchen','entrance','bathroom','office'])
     parser.add_argument('-e', '--epochs', type=int, default=20)
 
     args = parser.parse_args()
