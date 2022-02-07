@@ -181,7 +181,7 @@ class Model():
 
         confusion_matrix = tf.math.confusion_matrix(labels, predictions)  # add names!
 
-        f1 = f1_score(labels, predictions, average='weighted')
+        f1 = f1_score(labels, predictions, average='macro')
 
         return confusion_matrix, f1
 
