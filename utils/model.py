@@ -3,6 +3,9 @@ import zlib
 import numpy as np
 
 from scipy import signal
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from utils.signal_generator import SignalGenerator
 from utils.inference_latency import print_latency
 from utils.ResNet import ResNet18
@@ -193,7 +196,7 @@ class Model():
         print("F1 Score = {} %".format(round(f1 * 100, 2)))
 
         # dimension
-        print("Model size = {} kB".format(round(os.path.getsize(self.tflite_path) / 1024),2))
+        print("Model size = {} kB".format(round(os.path.getsize(self.tflite_path) / 1024, 2)))
 
         # latency
         # print_latency(self.model_path, MFCC_OPTIONS) -> FIX IT!!
