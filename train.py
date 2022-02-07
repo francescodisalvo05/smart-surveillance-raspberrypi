@@ -15,7 +15,7 @@ TEST_PATH = ''
 
 def main(args):
     MFCC_OPTIONS = {
-        'frame_length': 240, 'frame_step': 120, 'mfcc': True, 'lower_frequency': 20,
+        'frame_length': 1764 * 2, 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
         'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
     }
 
@@ -31,7 +31,7 @@ def main(args):
 
     learning_rate = 0.001
     epochs = args.epochs
-    input_shape = [32, 1469, 10, 1]
+    input_shape = [32, 99, 10, 1]
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
