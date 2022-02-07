@@ -40,22 +40,10 @@ def main(args):
 
     model.save_tflite('models_tflite/model_test_tflite/model.tflite')
 
-    cm = model.make_inference(test_ds)
+    cm, f1_score = model.make_inference(test_ds)
 
-    ax = plt.subplot()
-    sns.heatmap(cm, annot=True, fmt='g', ax=ax)
+    model.plot_stats(f1_score, cm, MFCC_OPTIONS)
 
-    ax.xaxis.set_ticklabels(labels)
-    ax.yaxis.set_ticklabels(labels)
-
-    plt.xticks(rotation=90)
-    plt.yticks(rotation=0)
-    plt.ylabel('Actual')
-    plt.xlabel('Predicted')
-    plt.title('Room - {}'.format(args.room))
-    plt.tight_layout()
-
-    plt.savefig('heatmap.png')
 
 
 if __name__ == '__main__':
