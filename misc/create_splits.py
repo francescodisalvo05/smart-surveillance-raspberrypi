@@ -32,7 +32,7 @@ args = parser.parse_args()
 df = pd.read_csv(DATASET_DEV_IDX, names=['fname', 'label'])
 
 fnames, classes = [], []
-room_dictionary = ROOM_DICTIONARY[args.room]
+room_dictionary = ROOM_DICTIONARY[args.room].copy()
 
 TRAIN_NAME = 'train_{}_split.txt'.format(args.room)
 VALIDATION_NAME = 'val_{}_split.txt'.format(args.room)
@@ -73,8 +73,23 @@ file.close()
 
 df_eval = pd.read_csv(DATASET_EVAL_IDX, names=['fname', 'label'])
 
-y = df_eval.label
-X = df_eval.drop(columns=['label'])
+
+
+fnames, classes = [], []
+room_dictionary = ROOM_DICTIONARY[args.room].copy()
+
+# get only 100 records
+# they will be augumented later
+for index, row in df_eval.iterrows():
+    if df.loc[index, 'label'] in list(room_dictionary.keys()):
+        if room_dictionary[df.loc[index, 'label']] < 150:
+            fnames.append(df.loc[index, 'fname'])
+            classes.append(df.loc[index, 'label'])
+            room_dictionary[df.loc[index, 'label']] += 1
+
+df_new_eval = pd.DataFrame({'fname': fnames, 'label': classes})
+y = df_new_eval.label
+X = df_new_eval.drop(columns=['label'])
 
 with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'w') as file:
     for idx in range(len(X)):
