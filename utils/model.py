@@ -4,6 +4,7 @@ import numpy as np
 
 from scipy import signal
 from utils.signal_generator import SignalGenerator
+from utils.ResNet import ResNet18
 
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
@@ -83,6 +84,8 @@ class Model():
                 keras.layers.Dense(units=4096,activation="relu"),
                 keras.layers.Dense(units=2, activation="softmax")
             ])
+        elif self.model_name == "RESNET":
+            model = ResNet18(units)
         else:
             raise ValueError('{} not implemented'.format(self.model_name))  
 
