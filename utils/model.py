@@ -4,6 +4,7 @@ import numpy as np
 
 from scipy import signal
 from utils.signal_generator import SignalGenerator
+from utils.inference_latency import print_latency
 from utils.ResNet import ResNet18
 
 import tensorflow as tf
@@ -153,7 +154,7 @@ class Model():
        
 
     def make_inference(self, test_ds):
-        
+
         interpreter = tf.lite.Interpreter(model_path=self.tflite_path)
         interpreter.allocate_tensors()
 
@@ -178,6 +179,25 @@ class Model():
             predictions.append(curr_prediction)
             labels.append(curr_label)
 
-        confusion_matrix = tf.math.confusion_matrix(labels, predictions) # add names!
+        confusion_matrix = tf.math.confusion_matrix(labels, predictions)  # add names!
 
-        return confusion_matrix
+        f1 = f1_score(labels, predictions, average='weighted')
+
+        return confusion_matrix, f1
+
+    def plot_stats(self, f1, cm, MFCC_OPTIONS, room, labels):
+
+        print("\n ==== STATS ====")
+
+        # f1 score
+        print("F1 Score = {} %".format(round(f1 * 100, 2)))
+
+        # dimension
+        print("Model size = {} kB".format(round(os.path.getsize(self.tflite_path) / 1024),2))
+
+        # latency
+        # print_latency(self.model_path, MFCC_OPTIONS) -> FIX IT!!
+
+        # confusion matrix
+        ax = plt.subplot()
+        sns.heatmap(cm, annot=True, fmt='g', ax=ax)
