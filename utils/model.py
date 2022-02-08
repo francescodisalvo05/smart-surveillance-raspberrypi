@@ -13,7 +13,7 @@ from utils.ResNet import ResNet18
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from tensorflow import keras
-
+from sklearn.metrics import f1_score
 
 class Model():
 
@@ -204,3 +204,12 @@ class Model():
         # confusion matrix
         ax = plt.subplot()
         sns.heatmap(cm, annot=True, fmt='g', ax=ax)
+        ax.xaxis.set_ticklabels(labels)
+        ax.yaxis.set_ticklabels(labels)
+        plt.xticks(rotation=90)
+        plt.yticks(rotation=0)
+        plt.ylabel('Actual')
+        plt.xlabel('Predicted')
+        plt.title('Room - {}'.format(room))
+        plt.tight_layout()
+        plt.savefig('heatmap_{}.png'.format(room))
