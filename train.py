@@ -8,10 +8,10 @@ import tensorflow_model_optimization as tfmot
 from utils.data import get_data
 from utils.model import Model
 from constants.split import ROOM_DICTIONARY
+from constants.misc import RANDOM_STATE
 
-TRAIN_PATH = ''
-TEST_PATH = ''
-
+tf.random.set_seed(RANDOM_STATE)
+np.random.seed(RANDOM_STATE)
 
 def main(args):
     MFCC_OPTIONS = {
@@ -42,7 +42,7 @@ def main(args):
 
     cm, f1_score = model.make_inference(test_ds)
 
-    model.plot_stats(f1_score, cm, MFCC_OPTIONS)
+    model.plot_stats(f1_score, cm, MFCC_OPTIONS, args.room, labels)
 
 
 
