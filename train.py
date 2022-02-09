@@ -10,6 +10,8 @@ from utils.model import Model
 from constants.split import ROOM_DICTIONARY
 from constants.misc import RANDOM_STATE
 
+import tensorflow as tf
+
 tf.random.set_seed(RANDOM_STATE)
 np.random.seed(RANDOM_STATE)
 
