@@ -35,8 +35,17 @@ class SignalGenerator:
             self.preprocess = self.preprocess_with_mfcc
         else:
             self.preprocess = self.preprocess_with_stft
-
+    
+    
     def apply_resampling(self, audio):
+        """Resample waveform if required."""
+        if self.sampling_rate != self.resampling_rate:
+            desired_length = int(round(float(len(audio)) /
+                                    self.sampling_rate * self.resampling_rate))
+            audio = signal.resample(audio, desired_length)
+        return audio
+    
+    def apply_resampling_old(self, audio):
         audio = signal.resample_poly(audio, 1, self.sampling_rate // self.resampling_rate)
         audio = tf.convert_to_tensor(audio, dtype=tf.float32)
         return audio
@@ -116,15 +125,14 @@ class SignalGenerator:
 
         return mfccs, label
 
-    def make_dataset(self, files, train, augumentation):
+    def make_dataset(self, files, train, augumentation_path):
 
         ds = tf.data.Dataset.from_tensor_slices(files)
-
-        ds_new = tf.data.Dataset.from_tensor_slices([''])
-
+        
         # duplicate audios for augumentation
-        if augumentation:
-            pass
+        if augumentation_path:
+            aug_files = [line.rstrip() for line in fp.readlines()]
+            ds_aug = tf.data.Dataset.from_tensor_slices([''])
         
         ds_new = ds
 
