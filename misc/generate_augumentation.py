@@ -1,11 +1,15 @@
 from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Shift
 
+
 from scipy import signal
 from scipy.io import wavfile
 
-import librosa
+from tqdm import tqdm
+import numpy as np
 import os
 import sys
+
+import librosa
 
 sys.path.append('constants/')
 from split import ROOM_DICTIONARY
@@ -20,12 +24,11 @@ augment = Compose([
     Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
 ])
 
-# check if it exists..
 if not os.path.exists(AUGUMENTATION_PATH):
     os.mkdir(AUGUMENTATION_PATH)
 
 for c in classes:
-    for filename in os.listdir(DATASET + c):
+    for filename in tqdm(os.listdir(DATASET + c)):
         audio, rate = librosa.load(DATASET + c + '/' + filename)
         augmented_samples = augment(samples=audio, sample_rate=rate)
         wavfile.write(DATASET + c + '/' + filename, rate, augmented_samples)
