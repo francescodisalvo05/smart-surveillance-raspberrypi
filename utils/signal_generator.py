@@ -105,7 +105,7 @@ class SignalGenerator:
 
         audio, label = self.read(file_path)
 
-        if self.resampling_rate is not None:
+        if self.resampling_rate:
             rate = self.resampling_rate
         else:
             rate = self.sampling_rate
@@ -131,18 +131,16 @@ class SignalGenerator:
         
         # duplicate audios for augumentation
         if augumentation_path:
-            aug_files = [line.rstrip() for line in fp.readlines()]
-            ds_aug = tf.data.Dataset.from_tensor_slices([''])
-        
-        ds_new = ds
+            aug_files = [augumentation_path + f.rstrip() for f in os.listdir(augumentation_path)]
+            ds = ds.concatenate(tf.data.Dataset.from_tensor_slices([aug_files]))
 
-        ds_new = ds_new.map(self.read_pad_aug, num_parallel_calls=4)
-        ds_new = ds_new.map(self.preprocess, num_parallel_calls=4)
+        ds = ds.map(self.read_pad, num_parallel_calls=4)
+        ds = ds.map(self.preprocess, num_parallel_calls=4)
 
-        ds_new = ds_new.batch(32)
-        ds_new = ds_new.cache()
+        ds = ds.batch(32)
+        ds = ds.cache()
 
         if train:
-            ds_new = ds_new.shuffle(100, reshuffle_each_iteration=True)
+            ds = ds.shuffle(100, reshuffle_each_iteration=True)
 
-        return ds_new
+        return ds
