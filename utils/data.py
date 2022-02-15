@@ -23,7 +23,4 @@ def get_data(room, labels, resampling, mfcc_options):
     val_ds = generator.make_dataset(val_files, False, False)
     test_ds = generator.make_dataset(test_files, False, False)
 
-    
-    # test_ds = generator.make_dataset(test_files, False)
-
     return train_ds, val_ds , test_ds
