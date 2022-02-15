@@ -28,8 +28,14 @@ if not os.path.exists(AUGUMENTATION_PATH):
     os.mkdir(AUGUMENTATION_PATH)
 
 for c in classes:
+
+    folder_path = AUGUMENTATION_PATH + c
+
+    if not os.path.exists(folder_path):
+      os.mkdir(folder_path)
+
     for filename in tqdm(os.listdir(DATASET + c)):
         audio, rate = librosa.load(DATASET + c + '/' + filename)
         augmented_samples = augment(samples=audio, sample_rate=rate)
-        wavfile.write(DATASET + c + '/' + filename, rate, augmented_samples)
+        wavfile.write(folder_path + '/' + filename, rate, augmented_samples)
 
