@@ -132,7 +132,12 @@ class SignalGenerator:
         # duplicate audios for augumentation
         if augumentation_path:
             aug_files = [augumentation_path + f.rstrip() for f in os.listdir(augumentation_path)]
-            ds = ds.concatenate(tf.data.Dataset.from_tensor_slices([aug_files]))
+
+            # get only the training ones!
+            train_filenames = [f.split("/")[-1] for f in files]
+            aug_train_files = [f for f in aug_files if f.split("/")[-1] in train_filenames]
+
+            ds = ds.concatenate(tf.data.Dataset.from_tensor_slices([aug_train_files]))
 
         ds = ds.map(self.read_pad, num_parallel_calls=4)
         ds = ds.map(self.preprocess, num_parallel_calls=4)
