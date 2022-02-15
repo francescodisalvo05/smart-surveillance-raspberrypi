@@ -2,8 +2,6 @@ import os
 
 import tensorflow as tf
 from scipy import signal
-import librosa
-import numpy as np
 
 
 class SignalGenerator:
@@ -94,24 +92,9 @@ class SignalGenerator:
 
         return spectrogram, label
 
-    def read_pad_aug(self, file_path):
+    def read_pad(self, file_path):
 
-        filename = tf.strings.split(file_path, sep='/', maxsplit=-1, name=None)[-1]
-        aug_ext = tf.strings.split(filename, sep='_', maxsplit=-1, name=None)[-1]
-
-        # GraphTensor cannot use .numpy()!
-        # to do : optimize it
-        # check it!!
-        if aug_ext == tf.constant('noise.wav', dtype=tf.string):
-            clean_path = tf.strings.regex_replace(file_path, "_noise.wav$", ".wav")
-        elif aug_ext == tf.constant('shift.wav', dtype=tf.string):
-            clean_path = tf.strings.regex_replace(file_path, "_shift.wav$", ".wav")
-        elif aug_ext == tf.constant('pitch.wav', dtype=tf.string):
-            clean_path = tf.strings.regex_replace(file_path, "_pitch.wav$", ".wav")
-        else:
-            clean_path = tf.strings.regex_replace(file_path, "_no.wav$", ".wav")
-
-        audio, label = self.read(clean_path)
+        audio, label = self.read(file_path)
 
         if self.resampling_rate is not None:
             rate = self.resampling_rate
@@ -123,13 +106,6 @@ class SignalGenerator:
         else:
             audio = self.pad(audio)
 
-        if aug_ext == tf.constant('noise.wav', dtype=tf.string):
-            audio = self.add_white_noise(audio, 0.1)
-        elif aug_ext == tf.constant('shift.wav', dtype=tf.string):
-            audio = self.shift_audio(audio, 1)  # shift one second
-        elif aug_ext == tf.constant('pitch.wav', dtype=tf.string):
-            audio = self.shift_audio(audio, 1)  # shift one second
-
         return audio, label
 
     def preprocess_with_mfcc(self, audio, label):
@@ -140,29 +116,6 @@ class SignalGenerator:
 
         return mfccs, label
 
-    def add_white_noise(self, signal, noise_factor=0.1):
-        mean, var = tf.nn.moments(signal, axes=[0])
-        noise = tf.random.normal(tf.shape(signal), mean=0.0, stddev=var ** 2, dtype=tf.dtypes.float32, seed=None,
-                                 name=None)
-        return signal + noise * noise_factor
-
-    def shift_audio(self, audio, seconds):
-
-        shift = np.random.randint(self.sampling_rate * seconds)  # 1 second
-
-        direction = np.random.randint(0, 2)
-
-        if direction == 1:  # left
-            shift = -shift
-
-        audio = tf.roll(audio, shift, axis=1)
-
-        return audio
-
-    def change_pitch(self, audio, pitch_factor=4):
-        # librosa doesn't work with Tr
-        return librosa.effects.pitch_shift(audio, self.sampling_rate, pitch_factor)
-
     def make_dataset(self, files, train, augumentation):
 
         ds = tf.data.Dataset.from_tensor_slices(files)
@@ -171,19 +124,9 @@ class SignalGenerator:
 
         # duplicate audios for augumentation
         if augumentation:
-            for elem in ds:
-                filename_no_aug = tf.strings.regex_replace(elem, ".wav^", "_no.wav")
-                # filename_aug = tf.strings.regex_replace(elem, ".wav^", "_noise.wav")
-                filename_aug = tf.strings.regex_replace(elem, ".wav^", "_shift.wav")
-                #filename_aug = tf.strings.regex_replace(elem, ".wav^", "_pitch.wav")
-
-                ds_new = ds_new.concatenate(tf.data.Dataset.from_tensor_slices([filename_no_aug]))
-                ds_new = ds_new.concatenate(tf.data.Dataset.from_tensor_slices([filename_aug]))
-
-                # skip ''
-                ds_new = ds_new.skip(1)
-        else:
-            ds_new = ds
+            pass
+        
+        ds_new = ds
 
         ds_new = ds_new.map(self.read_pad_aug, num_parallel_calls=4)
         ds_new = ds_new.map(self.preprocess, num_parallel_calls=4)
