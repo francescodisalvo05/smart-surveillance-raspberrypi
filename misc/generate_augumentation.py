@@ -24,6 +24,20 @@ augment = Compose([
     Shift(min_fraction=-0.5, max_fraction=0.5, p=0.5),
 ])
 
+def convert_float_samples_to_int16(y):
+    """
+    Convert floating-point numpy array of audio samples to int16.
+    :param y:
+    :param clamp_values: Clip extreme values to the range [-1.0, 1.0]. This can be done to avoid
+        integer overflow or underflow, which results in wrap distortion, which sounds worse than
+        clipping distortion.
+    :return:
+    """
+    if not issubclass(y.dtype.type, np.floating):
+        raise ValueError("input samples not floating-point")
+
+    return (y * np.iinfo(np.int16).max).astype(np.int16)
+
 if not os.path.exists(AUGUMENTATION_PATH):
     os.mkdir(AUGUMENTATION_PATH)
 
@@ -37,5 +51,6 @@ for c in classes:
     for filename in tqdm(os.listdir(DATASET + c)):
         audio, rate = librosa.load(DATASET + c + '/' + filename)
         augmented_samples = augment(samples=audio, sample_rate=rate)
-        wavfile.write(folder_path + '/' + filename, rate, augmented_samples)
+        augumented_int = convert_float_samples_to_int16(augmented_samples)
+        wavfile.write(folder_path + '/' + filename, rate, augumented_int)
 
