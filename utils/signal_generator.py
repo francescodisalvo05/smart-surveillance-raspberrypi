@@ -131,19 +131,24 @@ class SignalGenerator:
 
     def make_dataset(self, files, train, augumentation_path, room=None):
 
+        
         # duplicate audios for augumentation
         if augumentation_path:
 
             if not room:
               raise ValueError("You must specify the room!")
 
+            labels_to_augument = [l for l in ROOM_DICTIONARY[room].keys() if l not in ['Speech','Alarm']]
+
             # extract all the augumented files from the directory
-            for c in ROOM_DICTIONARY[room].keys():
+            for c in labels_to_augument:
+              print(c)
               files_from_dir = os.listdir(augumentation_path + c + '/')
               # append the base path in order to read them lately
               aug_files_path = [str(augumentation_path + c + '/' + f) for f in files_from_dir]
 
               files = files + aug_files_path
+              print(files[::-1][:5])
 
 
         ds = tf.data.Dataset.from_tensor_slices(files)
