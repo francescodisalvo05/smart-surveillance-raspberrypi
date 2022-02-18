@@ -12,10 +12,15 @@ import sys
 import librosa
 
 sys.path.append('constants/')
-from split import ROOM_DICTIONARY
 from path import DATASET, AUGUMENTATION_PATH
 
-classes = list(ROOM_DICTIONARY['all'].keys())
+classes = [
+    'Alarm', 'Boiling', 'Crying_and_sobbing',
+    'Doorbell', 'Drawer_open_or_close',
+    'Keys_jangling', 'Knock', 'Ringtone', 
+    'Sink_(filling_or_washing)', 
+    'Speech', 'Toilet_flush'
+]
 
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
