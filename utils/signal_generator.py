@@ -3,6 +3,10 @@ import os
 import tensorflow as tf
 from scipy import signal
 
+import sys  
+sys.path.append('constants/')
+from split import ROOM_DICTIONARY
+
 
 class SignalGenerator:
     def __init__(self, labels, sampling_rate, frame_length, frame_step,
@@ -125,20 +129,24 @@ class SignalGenerator:
 
         return mfccs, label
 
-    def make_dataset(self, files, train, augumentation_path):
+    def make_dataset(self, files, train, augumentation_path, room=None):
 
-        ds = tf.data.Dataset.from_tensor_slices(files)
-        
         # duplicate audios for augumentation
         if augumentation_path:
-            aug_files = [augumentation_path + f.rstrip() for f in os.listdir(augumentation_path)]
 
-            # get only the training ones!
-            train_filenames = [f.split("/")[-1] for f in files]
-            aug_train_files = [f for f in aug_files if f.split("/")[-1] in train_filenames]
+            if not room:
+              raise ValueError("You must specify the room!")
 
-            ds = ds.concatenate(tf.data.Dataset.from_tensor_slices([aug_train_files]))
+            # extract all the augumented files from the directory
+            for c in ROOM_DICTIONARY[room].keys():
+              files_from_dir = os.listdir(augumentation_path + c + '/')
+              # append the base path in order to read them lately
+              aug_files_path = [str(augumentation_path + c + '/' + f) for f in files_from_dir]
 
+              files = files + aug_files_path
+
+
+        ds = tf.data.Dataset.from_tensor_slices(files)
         ds = ds.map(self.read_pad, num_parallel_calls=4)
         ds = ds.map(self.preprocess, num_parallel_calls=4)
 
