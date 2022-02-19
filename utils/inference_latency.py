@@ -6,7 +6,7 @@ import numpy as np
 from subprocess import call
 
 
-def print_latency(model_path, MFCC_OPTIONS):
+def print_latency(model_path, MFCC_OPTIONS, resampled_rate=16000):
     call('sudo sh -c "echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor"',
          shell=True)
 
@@ -42,12 +42,15 @@ def print_latency(model_path, MFCC_OPTIONS):
     inf_latency = []
     tot_latency = []
     for _ in range(100):
-        sample = np.array(np.random.random_sample(44100 * 4), dtype=np.float32)
+        sample = np.array(np.random.random_sample(rate * 4), dtype=np.float32)
 
         start = time.time()
 
-        # Resampling
-        sample = signal.resample_poly(sample, 1, 44100 // rate)
+        if resampled_rate:
+            desired_length = int(round(float(len(sample)) /
+                                    rate * resampled_rate))
+            
+            sample = signal.resample(sample, desired_length)
 
         sample = tf.convert_to_tensor(sample, dtype=tf.float32)
 

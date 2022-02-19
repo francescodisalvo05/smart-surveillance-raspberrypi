@@ -16,24 +16,44 @@ tf.random.set_seed(RANDOM_STATE)
 np.random.seed(RANDOM_STATE)
 
 def main(args):
+
+    '''16 kHz
+    MFCC_OPTIONS = {
+        'frame_length': 640 * 2, 'frame_step': 320 * 2, 'mfcc': True, 'lower_frequency': 20,
+        'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
+    }
+    resampling_rate = 16000
+    '''
+
+    '''44,1 kHz'''
     MFCC_OPTIONS = {
         'frame_length': 1764 * 2, 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
         'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
     }
+    resampling_rate = None
 
     labels = list(ROOM_DICTIONARY[args.room].keys())
+    
 
     train_ds, val_ds, test_ds = get_data(
         room=args.room,
         labels=labels,
         mfcc_options=MFCC_OPTIONS,
-        resampling=None)
+        resampling=resampling_rate)
 
-    model = Model(model_name='DS-CNN', n_classes=len(labels), alpha=1, pruning=None)
+    for elem in train_ds:
+      print(tf.shape(elem[0]))
+      break
 
     learning_rate = 0.001
     epochs = args.epochs
-    input_shape = [32, 99, 10, 1]
+    input_shape = [32, 71, 10, 1]
+
+    model = Model(model_name='DS-CNN', 
+                  n_classes=len(labels),
+                  input_shape=input_shape, 
+                  alpha=1, 
+                  pruning=None)    
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
@@ -44,7 +64,7 @@ def main(args):
 
     cm, f1_score = model.make_inference(test_ds)
 
-    model.plot_stats(f1_score, cm, MFCC_OPTIONS, args.room, labels)
+    model.plot_stats(f1_score, cm, MFCC_OPTIONS, args.room, labels, resampling_rate)
 
 
 

@@ -17,18 +17,18 @@ from sklearn.metrics import f1_score
 
 class Model():
 
-    def __init__(self, model_name=None, alpha=1, n_classes=None, pruning=False):
+    def __init__(self, model_name=None, alpha=1, n_classes=None, pruning=False, input_shape=None):
 
         self.model_name = model_name
         self.n_classes = n_classes
+        self.input_shape = (input_shape[1],input_shape[2],input_shape[3])
 
-          #initialize optimization
+        #initialize optimization
         self.pruning = pruning
         self.alpha = alpha 
 
         self.model = self.set_model()
 
-      
         # initialize
         self.tflite_path = None
         self.model_path = None
@@ -42,7 +42,7 @@ class Model():
         if self.model_name == "DS-CNN":
 
             model = keras.Sequential([
-                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[3, 3], strides=strides, use_bias=False),
+                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
                   keras.layers.BatchNormalization(momentum=0.1),
                   keras.layers.ReLU(),
 
@@ -188,7 +188,7 @@ class Model():
 
         return confusion_matrix, f1
 
-    def plot_stats(self, f1, cm, MFCC_OPTIONS, room, labels):
+    def plot_stats(self, f1, cm, MFCC_OPTIONS, room, labels, resampling_rate):
 
         print("\n ==== STATS ====")
 
@@ -199,7 +199,7 @@ class Model():
         print("Model size = {} kB".format(round(os.path.getsize(self.tflite_path) / 1024, 2)))
 
         # latency
-        # print_latency(self.model_path, MFCC_OPTIONS) -> FIX IT!!
+        # print_latency(self.model_path, MFCC_OPTIONS, resampling_rate) -> FIX IT!!
 
         # confusion matrix
         ax = plt.subplot()
