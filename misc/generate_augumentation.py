@@ -15,12 +15,12 @@ sys.path.append('constants/')
 from path import DATASET, AUGUMENTATION_PATH
 
 classes = [
-    'Alarm', 'Boiling', 'Crying_and_sobbing',
+    'Boiling', 'Crying_and_sobbing',
     'Doorbell', 'Drawer_open_or_close',
     'Keys_jangling', 'Knock', 'Ringtone', 
     'Sink_(filling_or_washing)', 
-    'Speech', 'Toilet_flush'
-]
+    'Toilet_flush'
+] # no speech and alarm
 
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
@@ -47,6 +47,8 @@ if not os.path.exists(AUGUMENTATION_PATH):
     os.mkdir(AUGUMENTATION_PATH)
 
 for c in classes:
+
+    print("Class: {}".format(c))
 
     folder_path = AUGUMENTATION_PATH + c
 
