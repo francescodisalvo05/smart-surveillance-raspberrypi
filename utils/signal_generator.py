@@ -142,13 +142,11 @@ class SignalGenerator:
 
             # extract all the augumented files from the directory
             for c in labels_to_augument:
-              print(c)
               files_from_dir = os.listdir(augumentation_path + c + '/')
               # append the base path in order to read them lately
               aug_files_path = [str(augumentation_path + c + '/' + f) for f in files_from_dir]
 
               files = files + aug_files_path
-              print(files[::-1][:5])
 
 
         ds = tf.data.Dataset.from_tensor_slices(files)
