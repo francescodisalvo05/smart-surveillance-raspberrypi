@@ -42,7 +42,7 @@ def main(args):
         resampling=resampling_rate)
 
     for elem in train_ds:
-      input_shape = tf.shape(elem[0])
+      input_shape = elem[0].shape.as_list()
       print(input_shape)
       break
 
