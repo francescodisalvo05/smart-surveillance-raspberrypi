@@ -64,29 +64,29 @@ class Model():
             model = keras.Sequential([
 
             # Input shape to be specified 
-                keras.layers.Conv2D(input_shape=(),filters=64,kernel_size=(3,3),padding="same", activation="relu"),
-                keras.layers.Conv2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"),
-                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),  # shapes problem here
+                keras.layers.Conv2D(input_shape=self.input_shape,filters=64,kernel_size=(3,3),padding="same", activation="relu"),
+                keras.layers.Conv2D(filters=64,kernel_size=(3,3), padding="same", activation="relu"),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),  # shapes problem here
                 keras.layers.Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"),
-                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
                 keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"),
-                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
-                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
                 keras.layers.Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"),
-                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2)),
+                keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
 
                 keras.layers.Flatten(),
-                keras.layers.Dense(units=4096,activation="relu"),
-                keras.layers.Dense(units=4096,activation="relu"),
-                keras.layers.Dense(units=2, activation="softmax")
+                keras.layers.Dense(units=512,activation="relu"),
+                keras.layers.Dense(units=256,activation="relu"),
+                keras.layers.Dense(units=units, activation="softmax")
             ])
         elif self.model_name == "RESNET":
             model = ResNet18(units)
