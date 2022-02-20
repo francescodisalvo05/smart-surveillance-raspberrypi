@@ -42,12 +42,12 @@ def main(args):
         resampling=resampling_rate)
 
     for elem in train_ds:
-      print(tf.shape(elem[0]))
+      input_shape = tf.shape(elem[0])
+      print(input_shape)
       break
 
     learning_rate = 0.001
     epochs = args.epochs
-    input_shape = [32, 71, 10, 1]
 
     model = Model(model_name='DS-CNN', 
                   n_classes=len(labels),
