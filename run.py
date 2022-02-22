@@ -8,18 +8,21 @@ from datetime import datetime
 import os
 from argparse import ArgumentParser
 
+import tensorflow as tf
 
-def main():
+import numpy as np
+
+
+def main(args):
 
     p = pyaudio.PyAudio()
     
     while True:
         audio = record_audio(args, p)
-
-        
-
-     
-
+        # to do: audio preprocessing
+        prediction, probability = make_inference(audio)
+        # to do: convert number to label
+         
 
 def record_audio(args, p):
 
@@ -32,6 +35,30 @@ def record_audio(args, p):
     
     stream.stop_stream()
     stream.close()
+
+
+def preprocess_audio(audio):
+    return audio
+
+
+def make_inference(self, audio, tflite_path):
+
+    interpreter = tf.lite.Interpreter(model_path=tflite_path)
+    interpreter.allocate_tensors()
+
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    # give the input
+    interpreter.set_tensor(input_details[0]["index"], tf.convert_to_tensor(audio))
+    interpreter.invoke()
+
+    # predict and get the current ground truth
+    curr_prediction_logits = interpreter.get_tensor(output_details[0]['index']).squeeze()
+    curr_prediction = np.argmax(curr_prediction_logits)
+    
+    return curr_prediction, np.max(curr_prediction_logits)
+
 
 
 
