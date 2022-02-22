@@ -1,11 +1,16 @@
 import pyaudio
 import json
-
-from datetime import datetime
-from argparse import ArgumentParser
+import io
+import wave
 
 import tensorflow as tf
 import numpy as np
+
+from datetime import datetime
+from scipy.io import wavfile
+from argparse import ArgumentParser
+
+
 
 
 
@@ -22,10 +27,10 @@ def main(args):
     while True:
         # record 4s (temporary)
         # to do: audio preprocessing
-        audio = record_audio(args, p)
+        tf_audio = record_audio(args, p)
         
         # to do: convert number to label
-        prediction, probability = make_inference(audio)
+        prediction, probability = make_inference(tf_audio, args.tflite_path)
 
         # publish via MQTT
         publish_outcome(publisher, prediction, probability, args.room)
@@ -44,12 +49,26 @@ def record_audio(args, p):
     stream.stop_stream()
     stream.close()
 
+    container = io.BytesIO()
+    wf = wave.open(container, 'wb')
+    wf.setnchannels(args.channels)
+    wf.setsampwidth(p.get_sample_size(format))
+    wf.setframerate(args.rate)
+    wf.writeframes(b''.join(frames))    
+    
+    tf_audio, _ = tf.audio.decode_wav(container)
+    tf_audio = tf.squeeze(tf_audio, 1)
+
+    wf.close()   
+
+    return tf_audio
+
 
 def preprocess_audio(audio):
     return audio
 
 
-def make_inference(self, audio, tflite_path):
+def make_inference(self, tf_audio, tflite_path):
 
     interpreter = tf.lite.Interpreter(model_path=tflite_path)
     interpreter.allocate_tensors()
@@ -58,7 +77,7 @@ def make_inference(self, audio, tflite_path):
     output_details = interpreter.get_output_details()
 
     # give the input
-    interpreter.set_tensor(input_details[0]["index"], tf.convert_to_tensor(audio))
+    interpreter.set_tensor(input_details[0]["index"], tf_audio)
     interpreter.invoke()
 
     # predict and get the current ground truth
@@ -95,6 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', type=str, default=None, help='Set the name of the audio track')
 
     parser.add_argument('--room', type=int, default=1024, help='Room where the device is located. Useful with a set of different devices')
+    parser.add_argument('--tflite_path', type=int, default=None, help='tflite_path')
     
     args = parser.parse_args()
 
