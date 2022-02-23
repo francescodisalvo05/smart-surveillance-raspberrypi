@@ -54,7 +54,7 @@ TEST_NAME = 'test_split.txt'
 # they will be augumented later
 for index, row in df.iterrows():
     if df.loc[index, 'label'] in list(freq_dictionary.keys()):
-        if freq_dictionary[df.loc[index, 'label']] < 100:
+        if freq_dictionary[df.loc[index, 'label']] < 500:
             fnames.append(df.loc[index, 'fname'])
             classes.append(df.loc[index, 'label'])
             freq_dictionary[df.loc[index, 'label']] += 1
