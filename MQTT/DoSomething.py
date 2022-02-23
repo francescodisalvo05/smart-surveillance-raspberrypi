@@ -1,4 +1,4 @@
-from MyMQTT import MyMQTT
+from MQTT.MyMQTT import MyMQTT
 
 
 class DoSomething():
