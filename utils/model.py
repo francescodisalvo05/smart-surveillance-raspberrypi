@@ -188,7 +188,7 @@ class Model():
 
         return confusion_matrix, f1
 
-    def plot_stats(self, f1, cm, MFCC_OPTIONS, room, labels, resampling_rate):
+    def plot_stats(self, f1, cm, MFCC_OPTIONS, labels, resampling_rate):
 
         print("\n ==== STATS ====")
 
@@ -210,6 +210,6 @@ class Model():
         plt.yticks(rotation=0)
         plt.ylabel('Actual')
         plt.xlabel('Predicted')
-        plt.title('Room - {}'.format(room))
+        plt.title('Room - {}'.format('Danger'))
         plt.tight_layout()
-        plt.savefig('heatmap_{}.png'.format(room))
+        plt.savefig('heatmap_{}.png'.format('Danger'))
