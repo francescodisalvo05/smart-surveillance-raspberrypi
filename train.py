@@ -27,12 +27,19 @@ def main(args):
 
     '''44,1 kHz'''
     MFCC_OPTIONS = {
-        'frame_length': 1764 * 2, 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
+        'frame_length': 1764 , 'frame_step': 882 , 'mfcc': True, 'lower_frequency': 20,
         'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
     }
     resampling_rate = None
 
-    labels = list(ROOM_DICTIONARY[args.room].keys())
+    labels = list(['Bark',
+    'Door',
+    'Drill'
+    'Hammer',
+    'Fire',
+    'Gunshot_and_gunfire',
+    'Glass',
+    'Slam'])
     
 
     train_ds, val_ds, test_ds = get_data(
@@ -64,14 +71,13 @@ def main(args):
 
     cm, f1_score = model.make_inference(test_ds)
 
-    model.plot_stats(f1_score, cm, MFCC_OPTIONS, args.room, labels, resampling_rate)
+    model.plot_stats(f1_score, cm, MFCC_OPTIONS, labels, resampling_rate)
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-r', '--room', type=str, default='all', choices=['all', 'bedroom','kitchen','entrance','bathroom','office'])
     parser.add_argument('-e', '--epochs', type=int, default=20)
 
     args = parser.parse_args()

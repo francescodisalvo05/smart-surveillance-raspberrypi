@@ -11,7 +11,7 @@ from split import ROOM_DICTIONARY
 class SignalGenerator:
     def __init__(self, labels, sampling_rate, frame_length, frame_step,
                  num_mel_bins=None, lower_frequency=None, upper_frequency=None,
-                 num_coefficients=None, mfcc=False, resampling_rate=None, seconds=4):
+                 num_coefficients=None, mfcc=False, resampling_rate=None, seconds=1):
 
         self.labels = labels
 
