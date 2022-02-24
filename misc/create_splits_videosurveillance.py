@@ -32,7 +32,6 @@ Hammer: 165,
 Fire: 733,
 Gunshot: 384,
 Glass: 559,
-Slam: 323
 '''
 
 freq_dictionary = {
@@ -42,8 +41,7 @@ freq_dictionary = {
     'Hammer': 0,
     'Fire': 0,
     'Gunshot_and_gunfire': 0,
-    'Glass': 0,
-    'Slam': 0
+    'Glass': 0
 }
 
 TRAIN_NAME = 'train_split.txt'
