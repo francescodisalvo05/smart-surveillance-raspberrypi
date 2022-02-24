@@ -8,6 +8,7 @@ import numpy as np
 
 from datetime import datetime
 from scipy.io import wavfile
+from array import array
 from argparse import ArgumentParser
 
 import logging
@@ -20,13 +21,36 @@ def main(args):
 
     p = pyaudio.PyAudio()
 
+    print("\n\n")
+
     publisher = DoSomething("Publisher")
     publisher.run()
 
+    logging.info("The mic is running...")
+
     while True:
-        # record 4s (temporary)
-        # to do: audio preprocessing
-        tf_audio = record_audio(args, p)   
+
+        stream = p.open(format=pyaudio.paInt16, channels=args.channels, rate=args.rate, input=True, frames_per_buffer=args.chunk)
+
+        # wait for a trigger
+        while(True):
+            temp_data = stream.read(args.chunk)
+            temp_chunk = array('h',temp_data)
+            volume = max(temp_chunk)
+        
+            if volume >= 500:
+                break
+
+        # record the audio file & stop stream
+        tf_audio = record_audio(args, p, stream)
+        stream.stop_stream()
+        stream.close()   
+
+        # get mfccs
+
+        
+
+
         
         # to do: convert number to label
         # prediction, probability = make_inference(tf_audio, args.tflite_path)
@@ -36,19 +60,15 @@ def main(args):
         
         
 
-def record_audio(args, p):
+def record_audio(args, p, stream):
 
     logging.info('Start recoding...')
-
-    stream = p.open(format=pyaudio.paInt16, channels=args.channels, rate=args.rate, input=True, frames_per_buffer=args.chunk)
 
     frames = []
     for _ in range(0,int(args.rate / args.chunk * args.seconds)):
         data = stream.read(args.chunk)
         frames.append(data)
     
-    stream.stop_stream()
-    stream.close()
 
     wf = wave.open('filename.wav', 'wb')
     wf.setnchannels(args.channels)
@@ -58,6 +78,7 @@ def record_audio(args, p):
     wf.close() 
     
     audio = tf.io.read_file('filename.wav')
+
     tf_audio, _ = tf.audio.decode_wav(audio) 
 
     logging.info('End recoding...')  
@@ -111,7 +132,7 @@ if __name__ == '__main__':
     parser.add_argument('--chunk', type=int, default=1024, help='Set number of chunks')
     parser.add_argument('--format', type=str, default='Int16', help='Set the format of the audio track [Int8,Int16,Int32]')
     parser.add_argument('--channels', type=int, default=2, help='Set the number of channels')
-    parser.add_argument('--seconds', type=int, default=10, help='Set the length of the recording (seconds)')
+    parser.add_argument('--seconds', type=int, default=3, help='Set the length of the recording (seconds)')
     parser.add_argument('--rate', type=int, default=44100, help='Set the rate')
     parser.add_argument('--name', type=str, default=None, help='Set the name of the audio track')
 
