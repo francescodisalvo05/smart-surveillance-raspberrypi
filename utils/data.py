@@ -7,7 +7,7 @@ from path import SPLIT_BASE_PATH, AUGUMENTATION_PATH
 from utils.signal_generator import SignalGenerator
 
 
-def get_data(room, labels, resampling, mfcc_options):
+def get_data(labels, resampling, mfcc_options):
 
     with open('{}/train_split.txt'.format(SPLIT_BASE_PATH) ,"r") as fp:
        train_files = [line.rstrip() for line in fp.readlines()]
