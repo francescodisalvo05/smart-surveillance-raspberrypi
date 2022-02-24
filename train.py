@@ -43,7 +43,6 @@ def main(args):
     
 
     train_ds, val_ds, test_ds = get_data(
-        room=args.room,
         labels=labels,
         mfcc_options=MFCC_OPTIONS,
         resampling=resampling_rate)
