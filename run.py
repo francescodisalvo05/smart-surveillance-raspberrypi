@@ -10,6 +10,7 @@ from datetime import datetime
 from scipy.io import wavfile
 from array import array
 from argparse import ArgumentParser
+from io import BytesIO
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
@@ -30,7 +31,7 @@ def main(args):
 
     while True:
 
-        stream = p.open(format=pyaudio.paInt16, channels=args.channels, rate=args.rate, input=True, frames_per_buffer=args.chunk)
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=args.rate, input=True, frames_per_buffer=args.chunk)
 
         # wait for a trigger
         while(True):
@@ -43,10 +44,14 @@ def main(args):
 
         # record the audio file & stop stream
         tf_audio = record_audio(args, p, stream)
-        stream.stop_stream()
-        stream.close()   
+        
 
         # get mfccs
+        # tf_mfccs = get_mfccs(tf_audio)
+
+        # print(tf.shape(tf_mfccs))
+
+        break
 
         
 
@@ -64,22 +69,29 @@ def record_audio(args, p, stream):
 
     logging.info('Start recoding...')
 
+    chunks = int((args.rate / args.chunk) * args.seconds)
+
     frames = []
-    for _ in range(0,int(args.rate / args.chunk * args.seconds)):
+
+    stream.start_stream()
+    for _ in range(chunks):
         data = stream.read(args.chunk)
         frames.append(data)
-    
+    stream.stop_stream()
 
-    wf = wave.open('filename.wav', 'wb')
-    wf.setnchannels(args.channels)
+    buffer = BytesIO()
+    buffer.seek(0)
+
+    wf = wave.open(buffer, 'wb')
+    wf.setnchannels(1)
     wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
     wf.setframerate(args.rate)
     wf.writeframes(b''.join(frames))    
     wf.close() 
+    buffer.seek(0)
     
-    audio = tf.io.read_file('filename.wav')
-
-    tf_audio, _ = tf.audio.decode_wav(audio) 
+    tf_audio, _ = tf.audio.decode_wav(buffer.read()) 
+    tf_audio = tf.squeeze(tf_audio, 1)
 
     logging.info('End recoding...')  
 
@@ -87,11 +99,7 @@ def record_audio(args, p, stream):
     return tf_audio
 
 
-def preprocess_audio(audio):
-    return audio
-
-
-def make_inference(self, tf_audio, tflite_path):
+def make_inference(tf_audio, tflite_path):
 
     interpreter = tf.lite.Interpreter(model_path=tflite_path)
     interpreter.allocate_tensors()
@@ -129,15 +137,12 @@ if __name__ == '__main__':
     
     parser = ArgumentParser()
     
-    parser.add_argument('--chunk', type=int, default=1024, help='Set number of chunks')
-    parser.add_argument('--format', type=str, default='Int16', help='Set the format of the audio track [Int8,Int16,Int32]')
-    parser.add_argument('--channels', type=int, default=2, help='Set the number of channels')
-    parser.add_argument('--seconds', type=int, default=3, help='Set the length of the recording (seconds)')
+    parser.add_argument('--chunk', type=int, default=4410, help='Set number of chunks')
+    parser.add_argument('--seconds', type=int, default=1, help='Set the length of the recording (seconds)')
     parser.add_argument('--rate', type=int, default=44100, help='Set the rate')
-    parser.add_argument('--name', type=str, default=None, help='Set the name of the audio track')
 
-    parser.add_argument('--room', type=int, default=1024, help='Room where the device is located. Useful with a set of different devices')
-    parser.add_argument('--tflite_path', type=int, default=None, help='tflite_path')
+    parser.add_argument('--room', type=str, default='Entrance', help='Room where the device is located. Useful with a set of different devices')
+    parser.add_argument('--tflite_path', type=str, default='models_tflite/model_test_tflite/model.tflite', help='tflite_path')
     
     args = parser.parse_args()
 
