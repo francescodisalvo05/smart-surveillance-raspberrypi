@@ -2,6 +2,7 @@ import pyaudio
 import json
 import io
 import wave
+import time
 
 import tensorflow as tf
 import numpy as np
@@ -27,6 +28,8 @@ def main(args):
     publisher = DoSomething("Publisher")
     publisher.run()
 
+    time.sleep(1)
+
     logging.info("The mic is running...")
 
     while True:
@@ -49,10 +52,10 @@ def main(args):
         tf_mfccs = get_mfccs(tf_audio)
         
         # to do: convert number to label
-        # prediction, probability = make_inference(tf_audio, args.tflite_path)
+        prediction, probability = make_inference(tf_mfccs, args.tflite_path)
 
         # publish via MQTT
-        # publish_outcome(publisher, prediction, probability, args.room)
+        publish_outcome(publisher, prediction, probability)
         
         
 
@@ -118,7 +121,7 @@ def get_mfccs(tf_audio):
     return mfccs   
 
 
-def make_inference(tf_audio, tflite_path):
+def make_inference(tf_mfccs, tflite_path):
 
     interpreter = tf.lite.Interpreter(model_path=tflite_path)
     interpreter.allocate_tensors()
@@ -127,27 +130,29 @@ def make_inference(tf_audio, tflite_path):
     output_details = interpreter.get_output_details()
 
     # give the input
-    interpreter.set_tensor(input_details[0]["index"], tf_audio)
+    interpreter.set_tensor(input_details[0]["index"], tf_mfccs)
     interpreter.invoke()
 
-    # predict and get the current ground truth
-    curr_prediction_logits = interpreter.get_tensor(output_details[0]['index']).squeeze()
-    curr_prediction = np.argmax(curr_prediction_logits)
+    # get the possible predictions and their probabilities
+    predictions = interpreter.get_tensor(output_details[0]['index']).squeeze()
+    predictions = tf.nn.softmax(tf.convert_to_tensor(predictions)).numpy()
     
-    return curr_prediction, np.max(curr_prediction_logits)
+    first_prediction = np.argmax(predictions)
+    
+    return first_prediction, np.max(predictions)
 
 
-def publish_outcome(publisher, prediction, probability, room):
+def publish_outcome(publisher, prediction, probability):
     
-    timestamp = int(datetime.now().timestamp())
+    timestamp = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
     body = {
         'timestamp': timestamp,
-        'class': prediction, 
-        'confidence': probability
+        'class': int(prediction), 
+        'confidence': round(float(probability),2)
     }
 
-    publisher.myMqttClient.myPublish("/{}/alerts".format(room), json.dumps(body))
+    publisher.myMqttClient.myPublish("/R0001/alerts", json.dumps(body))
     
 
 
@@ -159,8 +164,6 @@ if __name__ == '__main__':
     parser.add_argument('--chunk', type=int, default=4410, help='Set number of chunks')
     parser.add_argument('--seconds', type=int, default=1, help='Set the length of the recording (seconds)')
     parser.add_argument('--rate', type=int, default=44100, help='Set the rate')
-
-    parser.add_argument('--room', type=str, default='Entrance', help='Room where the device is located. Useful with a set of different devices')
     parser.add_argument('--tflite_path', type=str, default='models_tflite/model_test_tflite/model.tflite', help='tflite_path')
     
     args = parser.parse_args()
