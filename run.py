@@ -45,17 +45,8 @@ def main(args):
         # record the audio file & stop stream
         tf_audio = record_audio(args, p, stream)
         
-
         # get mfccs
-        # tf_mfccs = get_mfccs(tf_audio)
-
-        # print(tf.shape(tf_mfccs))
-
-        break
-
-        
-
-
+        tf_mfccs = get_mfccs(tf_audio)
         
         # to do: convert number to label
         # prediction, probability = make_inference(tf_audio, args.tflite_path)
@@ -97,6 +88,34 @@ def record_audio(args, p, stream):
 
 
     return tf_audio
+
+
+def get_mfccs(tf_audio):
+
+    frame_length = 1764
+    frame_step = 882
+    num_mel_bins = 40
+    low_freq = 20
+    up_freq = 4000
+    num_coefficients = 10
+
+    spectrogram_width = (44100 - frame_length) // frame_step + 1
+    num_spectrogram_bins = frame_length // 2 + 1
+
+    linear_to_mel_weight_matrix = tf.signal.linear_to_mel_weight_matrix(
+        num_mel_bins, num_spectrogram_bins, 44100, 20, 4000)
+
+    stft = tf.signal.stft(tf_audio, frame_length, frame_step,
+            fft_length=frame_length)
+    spectrogram = tf.abs(stft)
+    mel_spectrogram = tf.tensordot(spectrogram, linear_to_mel_weight_matrix, 1)
+    
+    log_mel_spectrogram = tf.math.log(mel_spectrogram + 1.e-6)
+    mfccs = tf.signal.mfccs_from_log_mel_spectrograms(log_mel_spectrogram)
+    mfccs = mfccs[..., :num_coefficients]
+    mfccs = tf.reshape(mfccs, [1, spectrogram_width, num_coefficients, 1])
+
+    return mfccs   
 
 
 def make_inference(tf_audio, tflite_path):
