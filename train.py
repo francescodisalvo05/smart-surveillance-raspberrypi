@@ -39,7 +39,6 @@ def main(args):
         'Hammer',
         'Gunshot',
         'Glass',
-        'Slam'
     ]
     
 
