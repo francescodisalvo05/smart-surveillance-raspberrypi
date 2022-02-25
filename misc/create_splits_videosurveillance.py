@@ -8,12 +8,12 @@ sys.path.append('constants/')
 
 from misc import RANDOM_STATE
 
-DATASET = 'data/Dataset/'
+DATASET = 'data/Dataset_new/'
 SPLIT_BASE_PATH = 'assets/dataset_split/'
 
-TRAIN_NAME = 'train_split.txt'
-VALIDATION_NAME = 'val_split.txt'
-TEST_NAME = 'test_split.txt'
+TRAIN_NAME = 'train_split_1s.txt'
+VALIDATION_NAME = 'val_split_1s.txt'
+TEST_NAME = 'test_split_1s.txt'
 
 ##########################################################
 ######### GET TABULAR INFORMATION
