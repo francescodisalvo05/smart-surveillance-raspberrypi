@@ -15,6 +15,12 @@ import tensorflow_model_optimization as tfmot
 from tensorflow import keras
 from sklearn.metrics import f1_score
 
+def scheduler(epoch, lr):
+    if epoch < 10:
+        return lr
+    else:
+        return lr * tf.math.exp(-0.1)
+
 class Model():
 
     def __init__(self, model_name=None, alpha=1, n_classes=None, pruning=False, input_shape=None):
@@ -97,15 +103,21 @@ class Model():
 
 
     def train_model(self, train_ds, val_ds, learning_rate, input_shape, num_epochs):
+
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath='models_tflite', monitor='val_sparse_categorical_accuracy', save_best_only=True)
+        lr_callback = tf.keras.callbacks.LearningRateScheduler(scheduler)
+        callbacks = [cp_callback, lr_callback]
             
         pruning_params = {'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.30,
-                                                                               final_sparsity=0.85,
+                                                                               final_sparsity=0.60,
                                                                                begin_step=len(train_ds) * 5,
                                                                                end_step=len(train_ds) * 15)}
         if self.pruning:
+            
             prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
             model = prune_low_magnitude(self.model,**pruning_params)
-            callbacks = [tfmot.sparsity.keras.UpdatePruningStep()]
+            pr_callback = tfmot.sparsity.keras.UpdatePruningStep()
+            callbacks.append(pr_callback)
         
             self.model.build(input_shape=input_shape)
             self.model.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
