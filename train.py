@@ -37,7 +37,6 @@ def main(args):
         'Door',
         'Drill',
         'Hammer',
-        'Fire',
         'Gunshot',
         'Glass',
         'Slam'
