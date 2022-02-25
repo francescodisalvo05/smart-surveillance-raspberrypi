@@ -27,19 +27,17 @@ def main(args):
 
     '''44,1 kHz'''
     MFCC_OPTIONS = {
-        'frame_length': 1764 , 'frame_step': 882 , 'mfcc': True, 'lower_frequency': 20,
+        'frame_length': 1764 *2 , 'frame_step': 882 *2, 'mfcc': True, 'lower_frequency': 20,
         'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
     }
     resampling_rate = None
 
-    labels = [
-        'Bark',
-        'Door',
-        'Drill',
-        'Hammer',
-        'Gunshot',
-        'Glass',
-    ]
+    labels = list(['Bark',
+    'Door',
+    'Drill',
+    'Hammer',
+    'Gunshot',
+    'Glass'])
     
 
     train_ds, val_ds, test_ds = get_data(
@@ -58,8 +56,8 @@ def main(args):
     model = Model(model_name='DS-CNN', 
                   n_classes=len(labels),
                   input_shape=input_shape, 
-                  alpha=1, 
-                  pruning=None)    
+                  alpha=0.8,
+                  pruning=True)    
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
 
