@@ -65,7 +65,106 @@ class Model():
                   keras.layers.GlobalAveragePooling2D(),
                   keras.layers.Dense(units=units)
               ])
-              
+        elif self.model_name == "MobileNet":
+            model = keras.Sequential([
+                  keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+
+                  keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+                  keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+
+                  keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+                  keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+
+                  keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+                  keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(momentum=0.1),
+                  keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*512), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*1024), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+                  #keras.layers.Conv2D(filters=int(self.alpha*1024), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  #keras.layers.BatchNormalization(momentum=0.1),
+                  #keras.layers.ReLU(),
+
+                  keras.layers.GlobalAveragePooling2D(),
+                  keras.layers.Dense(units=units)
+            ])      
         elif self.model_name == "VGG":
             model = keras.Sequential([
 
@@ -109,7 +208,7 @@ class Model():
         callbacks = [cp_callback, lr_callback]
             
         pruning_params = {'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.30,
-                                                                               final_sparsity=0.60,
+                                                                               final_sparsity=0.40,
                                                                                begin_step=len(train_ds) * 5,
                                                                                end_step=len(train_ds) * 15)}
         if self.pruning:
@@ -135,7 +234,6 @@ class Model():
 
             self.model.fit(train_ds, epochs=num_epochs, validation_data=val_ds)   
 
-
     def save_tf(self, path=''):
 
         self.model_path = path
@@ -144,7 +242,6 @@ class Model():
             os.mkdir(self.model_path)
 
         self.model.save(self.model_path)
-
 
 
     def save_tflite(self, path='', optimization=None):
@@ -165,8 +262,6 @@ class Model():
         # save tflite model
         with open(self.tflite_path, 'wb') as fp:
             fp.write(tflite_m)
-
-       
 
     def make_inference(self, test_ds):
 
