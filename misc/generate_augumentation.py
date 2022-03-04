@@ -15,12 +15,8 @@ sys.path.append('constants/')
 from path import DATASET, AUGUMENTATION_PATH
 
 classes = [
-    'Boiling', 'Crying_and_sobbing',
-    'Doorbell', 'Drawer_open_or_close',
-    'Keys_jangling', 'Knock', 'Ringtone', 
-    'Sink_(filling_or_washing)', 
-    'Toilet_flush'
-] # no speech and alarm
+    'Bark', 'Door', 'Drill', 'Glass', 'Gunshot', 'Hammer'
+] 
 
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
