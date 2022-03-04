@@ -40,47 +40,30 @@ def main(args):
 
     while True:
 
-        predictions, probabilities = [], []
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=args.rate, input=True, frames_per_buffer=args.chunk)
 
-        for _ in range(5):
-
-            stream = p.open(format=pyaudio.paInt16, channels=1, rate=args.rate, input=True, frames_per_buffer=args.chunk)
-
-            # wait for a trigger
-            while(True):
-                temp_data = stream.read(args.chunk)
-                temp_chunk = array('h',temp_data)
-                volume = max(temp_chunk)
-            
-                if volume >= 1000:
-                    break
-
-            # record the audio file & stop stream
-            tf_audio = record_audio(args, p, stream)
-            
-            # get mfccs
-            tf_mfccs = get_mfccs(tf_audio)
-            
-            # to do: convert number to label
-            prediction, probability = make_inference(tf_mfccs, args.tflite_path)
-
-            predictions.append(prediction)
-            probabilities.append(probability)
-
-            # if probability >= 0.8:
-                # publish via MQTT
-            # publish_outcome(publisher, prediction, probability)
-
-        print(" ------ ")
-        print(Counter(predictions)[0])
-        print(" ------ ")
-        # time.sleep(1)
+        # wait for a trigger
+        while(True):
+            temp_data = stream.read(args.chunk)
+            temp_chunk = array('h',temp_data)
+            volume = max(temp_chunk)
         
+            if volume >= 1000:
+                break
+
+        # record the audio file & stop stream
+        tf_audio = record_audio(args, p, stream)
+        tf_mfccs = get_mfccs(tf_audio)
         
+        # to do: convert number to label
+        prediction, probability = make_inference(tf_mfccs, args.tflite_path)
+
+        if probability >= 0.8:
+            # publish via MQTT
+            publish_outcome(publisher, prediction, probability)
+
 
 def record_audio(args, p, stream):
-
-    # logging.info('Start recoding...')
 
     chunks = int((args.rate / args.chunk) * args.seconds)
 
@@ -91,7 +74,6 @@ def record_audio(args, p, stream):
         data = stream.read(args.chunk)
         frames.append(data)
     stream.stop_stream()
-
 
     if args.store_files:
         FILENAME = 'audio_files/{}.wav'.format(str(datetime.now()).replace(" ","_"))
@@ -116,8 +98,6 @@ def record_audio(args, p, stream):
         
     
     tf_audio = tf.squeeze(tf_audio, 1)
-
-    # logging.info('End recoding...')  
 
 
     return tf_audio
@@ -170,22 +150,23 @@ def make_inference(tf_mfccs, tflite_path):
     # get the possible predictions and their probabilities
     predictions = interpreter.get_tensor(output_details[0]['index']).squeeze()
     predictions = tf.nn.softmax(tf.convert_to_tensor(predictions)).numpy()
-
-    labels = ['Bark', 'Door', 'Drill', 'Hammer', 'Gunshot', 'Glass']    
+  
     first_prediction = np.argmax(predictions)
-
-    first_label = labels[first_prediction]
-
-    print('({},{})'.format(first_label, round(np.max(predictions),2)))
     
-    return first_label, np.max(predictions)
+    return first_prediction, np.max(predictions)
 
 
 def publish_outcome(publisher, prediction, probability):
     
     timestamp = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    labels = ['Bark', 'Door', 'Drill', 'Hammer', 'Gunshot', 'Glass']
+    labels = [
+    'Bark',
+    'Door',
+    'Drill',
+    'Hammer',
+    'Gunshot',
+    'Glass']
 
     body = {
         'timestamp': timestamp,
