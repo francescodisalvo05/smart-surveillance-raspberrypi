@@ -14,12 +14,17 @@ from array import array
 from argparse import ArgumentParser
 from io import BytesIO
 from collections import Counter
+import requests
+from datetime import datetime
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
 
 from MQTT.DoSomething import DoSomething
 
+# TO DO: DO NOT LEAVE DATA LIKE THIS IN THE FINAL VERSION
+bot_token = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
+bot_chatID = '-1001708196634'
 
 def main(args):
 
@@ -175,6 +180,43 @@ def publish_outcome(publisher, prediction, probability):
     }
 
     publisher.myMqttClient.myPublish("/R0001/alerts", json.dumps(body))
+
+    def send_text(bot_message):
+    
+        send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+
+        response = requests.get(send_text)
+
+        return response.json()
+
+    def send_photo(file_opened):
+        method = "sendPhoto"
+        params = {'chat_id': bot_chatID}
+        files = {'photo': file_opened}
+        url = 'https://api.telegram.org/bot' + bot_token + "/"
+        resp = requests.post(url + method, params, files=files)
+        return resp
+
+    def send_video(file_opened):
+        method = "sendVideo"
+        params = {'chat_id': bot_chatID}
+        files = {'video': file_opened}
+        url = 'https://api.telegram.org/bot' + bot_token + "/"
+        resp = requests.post(url + method, params, files=files)
+        return resp
+
+    def send_update():
+        now = datetime.now()
+
+        current_time = now.strftime("%H:%M:%S")
+
+        message = "⚠️ *Allarme Intrusione* ⚠️\n" + "Orario🕚 :" + current_time
+        send_text(message)
+        #send_photo( open("thief.jpg", 'rb'))
+        #send_video( open("max.mp4", 'rb'))
+
+
+
     
 
 if __name__ == '__main__':
