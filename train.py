@@ -32,12 +32,7 @@ def main(args):
     }
     resampling_rate = None
 
-    labels = list(['Bark',
-    'Door',
-    'Drill',
-    'Hammer',
-    'Gunshot',
-    'Glass'])
+    labels = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
     
 
     train_ds, val_ds, test_ds = get_data(
