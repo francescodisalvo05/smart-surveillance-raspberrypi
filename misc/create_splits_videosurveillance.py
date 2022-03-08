@@ -8,12 +8,12 @@ sys.path.append('constants/')
 
 from misc import RANDOM_STATE
 
-DATASET = 'data/Dataset_1s/'
+DATASET = 'data/Dataset/'
 SPLIT_BASE_PATH = 'assets/dataset_split/'
 
-TRAIN_NAME = 'train_split_1s.txt'
-VALIDATION_NAME = 'val_split_1s.txt'
-TEST_NAME = 'test_split_1s.txt'
+TRAIN_NAME = 'train_split.txt'
+VALIDATION_NAME = 'val_split.txt'
+TEST_NAME = 'test_split.txt'
 
 fnames, classes = [], []
 
@@ -44,6 +44,7 @@ with open(os.path.join(SPLIT_BASE_PATH, VALIDATION_NAME), 'w') as file:
 file.close()
 
 with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'w') as file:
-    for idx in range(len(X)):
-        string = './{}{}/{}\n'.format(DATASET, y.iloc[idx], X.iloc[idx].fname)
+    for idx in range(len(x_val)):
+        string = './{}{}/{}\n'.format(DATASET, y_test.iloc[idx], x_test.iloc[idx].fname)
         file.write(string)
+file.close()
