@@ -17,7 +17,7 @@ TEST_NAME = 'test_split.txt'
 
 fnames, classes = [], []
 
-for folder in os.listdir(DATASET):
+for folder in ['Bark','Crash','Door','Doorbell','Drill','Other','Speech']:
     for file in os.listdir(os.path.join(DATASET,folder)):
         classes.append(folder)
         fnames.append(file)
