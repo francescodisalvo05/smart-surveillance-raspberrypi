@@ -23,8 +23,6 @@ with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'r') as file:
         x_clean.append(line.strip().split("/")[-1])
 file.close()
 
-print(x_clean)
-
 fnames, classes = [], []
 
 for folder in ['Bark','Crash','Door','Doorbell','Drill','Other','Speech']:
