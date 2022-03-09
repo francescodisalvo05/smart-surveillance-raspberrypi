@@ -14,9 +14,7 @@ import librosa
 sys.path.append('constants/')
 from path import DATASET, AUGUMENTATION_PATH
 
-classes = [
-    'Bark', 'Door', 'Drill', 'Glass', 'Gunshot', 'Hammer'
-] 
+classes = ['Bark','Crash','Door','Doorbell','Drill','Other','Speech']
 
 augment = Compose([
     AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
