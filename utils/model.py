@@ -8,7 +8,7 @@ import seaborn as sns
 
 from utils.signal_generator import SignalGenerator
 from utils.inference_latency import print_latency
-from utils.ResNet import ResNet18
+from utils.ResNet import Residual
 
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
@@ -46,7 +46,6 @@ class Model():
         units = self.n_classes
 
         if self.model_name == "DS-CNN":
-
             model = keras.Sequential([
                   keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
                   keras.layers.BatchNormalization(momentum=0.1),
@@ -165,6 +164,33 @@ class Model():
                   keras.layers.GlobalAveragePooling2D(),
                   keras.layers.Dense(units=units)
             ])
+        elif self.model_name == "MobileNetV2":
+            model = keras.Sequential([
+                  keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
+                  keras.layers.BatchNormalization(epsilon=1e-3, momentum=0.999),  
+                  keras.layers.ReLU(6.),
+
+                  Residual(filters=int(self.alpha*16)),
+                  
+                  keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(epsilon=1e-3, momentum=0.999),
+                  keras.layers.ReLU(6.),
+                  keras.layers.Conv2D(filters=int(self.alpha*16), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(epsilon=1e-3, momentum=0.999),
+                  keras.layers.ReLU(6.),
+
+                  Residual(filters=int(self.alpha*24)),
+                
+                  keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(epsilon=1e-3, momentum=0.999),
+                  keras.layers.ReLU(6.),
+                  keras.layers.Conv2D(filters=int(self.alpha*24), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.BatchNormalization(epsilon=1e-3, momentum=0.999),
+                  keras.layers.ReLU(6.),
+
+                  keras.layers.GlobalAveragePooling2D(),
+                  keras.layers.Dense(units=units)
+            ])
         elif self.model_name == "SimpleNet":
             model = keras.Sequential([
                   keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
@@ -218,8 +244,6 @@ class Model():
                 keras.layers.Dense(units=256,activation="relu"),
                 keras.layers.Dense(units=units, activation="softmax")
             ])
-        elif self.model_name == "RESNET":
-            model = ResNet18(units)
         else:
             raise ValueError('{} not implemented'.format(self.model_name))  
 
