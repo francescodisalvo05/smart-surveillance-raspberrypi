@@ -4,6 +4,44 @@ from keras.models import Sequential
 from keras.models import Model
 import tensorflow as tf
 
+from keras.engine.topology import Layer
+from tensorflow import keras
+
+class Residual(Layer):
+    def __init__(self, filters):
+        super(Residual, self).__init__()
+        self.filters = filters
+
+    def call(self, inputs):
+        x = inputs
+        in_channels = keras.backend.int_shape(inputs)[-1]
+        x = keras.layers.Conv2D(6 * in_channels,
+                                kernel_size=[1, 1],
+                                strides=[1, 1],
+                                padding='same',
+                                use_bias=False,
+                                activation=None)(x)
+        x = keras.layers.BatchNormalization(epsilon=1e-3,
+                                            momentum=0.999)(x)
+        x = keras.layers.ReLU(6.)(x)
+        x = keras.layers.DepthwiseConv2D(kernel_size=[3, 3],
+                                         strides=[1, 1],
+                                         activation=None,
+                                         use_bias=False,
+                                         padding='same')(x)
+        x = keras.layers.BatchNormalization(epsilon=1e-3,
+                                            momentum=0.999)(x)
+        x = keras.layers.ReLU(6.)(x)
+        x = keras.layers.Conv2D(filters=self.filters,
+                                kernel_size=[1, 1],
+                                strides=[1, 1],
+                                padding='same',
+                                use_bias=False,
+                                activation=None)(x)
+        x = keras.layers.BatchNormalization(epsilon=1e-3,
+                                            momentum=0.999)(x)
+        return keras.layers.Add()([inputs, x])
+
 
 class ResnetBlock(Model):
     """
