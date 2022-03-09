@@ -164,7 +164,32 @@ class Model():
 
                   keras.layers.GlobalAveragePooling2D(),
                   keras.layers.Dense(units=units)
-            ])      
+            ])
+        elif self.model_name == "SimpleNet":
+            model = keras.Sequential([
+                  keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
+                  keras.layers.ReLU(),
+                  keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
+
+                  keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.ReLU(),
+                  keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
+
+                  keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.ReLU(),
+                  keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
+
+                  keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                  keras.layers.ReLU(),
+                  keras.layers.MaxPool2D(pool_size=(2,2),strides=(2,2), padding="same"),
+
+                  keras.layers.Dropout(0.25),
+                  keras.layers.Flatten(),
+                  keras.layers.Dense(units=128),
+                  keras.layers.ReLU(),
+                  keras.layers.Dropout(0.5),
+                  keras.layers.Dense(units=units)
+            ])
         elif self.model_name == "VGG":
             model = keras.Sequential([
 
