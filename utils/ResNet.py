@@ -4,7 +4,7 @@ from keras.models import Sequential
 from keras.models import Model
 import tensorflow as tf
 
-from keras.engine.topology import Layer
+from keras.layers import Layer
 from tensorflow import keras
 
 class Residual(Layer):
