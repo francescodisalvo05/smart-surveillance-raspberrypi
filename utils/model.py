@@ -8,8 +8,8 @@ import seaborn as sns
 
 from utils.signal_generator import SignalGenerator
 from utils.inference_latency import print_latency
-from utils.ResNet import Residual
-from utils.MobileNetV2 import MobileNetV2
+#from utils.ResNet import Residual
+from utils.MobileNetV2 import Stride2Block
 
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
@@ -85,12 +85,12 @@ class Model():
                 keras.layers.BatchNormalization(momentum=0.1),
                 keras.layers.ReLU(),
 
-                keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                keras.layers.BatchNormalization(momentum=0.1),
-                keras.layers.ReLU(),
-                keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
-                keras.layers.BatchNormalization(momentum=0.1),
-                keras.layers.ReLU(),
+                #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                #keras.layers.BatchNormalization(momentum=0.1),
+                #keras.layers.ReLU(),
+                #keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                #keras.layers.BatchNormalization(momentum=0.1),
+                #keras.layers.ReLU(),
 
                 #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
                 #keras.layers.BatchNormalization(momentum=0.1),
@@ -110,7 +110,23 @@ class Model():
                 keras.layers.Dense(units=units)
             ])
         elif self.model_name == "MobileNetV2":
-            model = MobileNetV2(self.alpha, self.input_shape, units)
+            model = keras.Sequential([
+                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
+                keras.layers.BatchNormalization(momentum=0.1),
+                keras.layers.ReLU(),
+
+                Stride2Block((int(self.alpha*64), int(self.alpha*64))),
+
+                keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
+                keras.layers.BatchNormalization(momentum=0.1),
+                keras.layers.ReLU(),
+                keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
+                keras.layers.BatchNormalization(momentum=0.1),
+                keras.layers.ReLU(),
+
+                keras.layers.GlobalAveragePooling2D(),
+                keras.layers.Dense(units=units)
+            ])
         elif self.model_name == "MusicTaggerCNN":
             model = keras.Sequential([
                 keras.layers.InputLayer(input_shape=self.input_shape),
@@ -119,89 +135,30 @@ class Model():
                 keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=3, strides=3, padding="same", use_bias=False),
                 keras.layers.BatchNormalization(axis=1),
                 keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,4), mode=0, padding="same"),
+                keras.layers.MaxPool2D(pool_size=(2,4), padding="same"),
 
                 keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=3, strides=3, padding="same", use_bias=False),
                 keras.layers.BatchNormalization(axis=1),
                 keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,4), mode=0, padding="same"),
+                keras.layers.MaxPool2D(pool_size=(2,4), padding="same"),
 
                 keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=3, strides=3, padding="same", use_bias=False),
                 keras.layers.BatchNormalization(axis=1),
                 keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,4), mode=0, padding="same"),
+                keras.layers.MaxPool2D(pool_size=(2,4), padding="same"),
                 
                 keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=3, strides=3, padding="same", use_bias=False),
                 keras.layers.BatchNormalization(axis=1),
                 keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(3,5), mode=0, padding="same"),
+                keras.layers.MaxPool2D(pool_size=(3,5), padding="same"),
                 
                 keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=3, strides=3, padding="same", use_bias=False),
                 keras.layers.BatchNormalization(axis=1),
                 keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(4,4), mode=0, padding="same"),
+                keras.layers.MaxPool2D(pool_size=(4,4), padding="same"),
 
                 keras.layers.Flatten(),
                 keras.layers.Dense(units=units)
-            ])
-        elif self.model_name == "Urban8kNet":
-            model = keras.Sequential([
-                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
-                keras.layers.ReLU(),
-                keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                keras.layers.ReLU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding="same"),
-                keras.layers.Dropout(0.25),
-
-                keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
-                keras.layers.ReLU(),
-                keras.layers.Conv2D(filters=int(self.alpha*64), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                keras.layers.ReLU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding="same"),
-                keras.layers.Dropout(0.50),
-
-                keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
-                keras.layers.ReLU(),
-                keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                keras.layers.ReLU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding="same"),
-                keras.layers.Dropout(0.50),
-                
-                keras.layers.Flatten(),
-                keras.layers.Dense(units=512),
-                keras.layers.ReLU(),
-                keras.layers.Dropout(0.5),
-                keras.layers.Dense(units=units, activation='softmax')
-            ])
-        elif self.model_name == "AudioClassifierCNN":
-            model = keras.Sequential([
-                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=strides, use_bias=False, input_shape=self.input_shape),
-                keras.layers.BatchNormalization(axis=1, mode=2),
-                keras.layers.ReLU(),
-
-                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=[1, 1], use_bias=False, input_shape=self.input_shape),
-                keras.layers.BatchNormalization(axis=1, mode=2),
-                keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), padding="same"),
-                keras.layers.Dropout(0.25),
-
-                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=[1, 1], use_bias=False, input_shape=self.input_shape),
-                keras.layers.BatchNormalization(axis=1, mode=2),
-                keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), padding="same"),
-                keras.layers.Dropout(0.25),
-                
-                keras.layers.Conv2D(filters=int(self.alpha*32), kernel_size=[3, 3], strides=[1, 1], use_bias=False, input_shape=self.input_shape),
-                keras.layers.BatchNormalization(axis=1, mode=2),
-                keras.layers.ELU(),
-                keras.layers.MaxPool2D(pool_size=(2,2), padding="same"),
-                keras.layers.Dropout(0.25),
-                
-                keras.layers.Flatten(),
-                keras.layers.Dense(units=128),
-                keras.layers.ReLU(),
-                keras.layers.Dropout(0.5),
-                keras.layers.Dense(units=units, activation='softmax')
             ])
         elif self.model_name == "SimpleNet":
             model = keras.Sequential([
@@ -221,11 +178,12 @@ class Model():
                 keras.layers.ReLU(),
                 keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding="same"),
 
-                keras.layers.Dropout(0.25),
-                keras.layers.Flatten(),
-                keras.layers.Dense(units=128),
-                keras.layers.ReLU(),
-                keras.layers.Dropout(0.5),
+                #keras.layers.Dropout(0.25),
+                #keras.layers.Flatten(),
+                #keras.layers.Dense(units=128),
+                #keras.layers.ReLU(),
+                #keras.layers.Dropout(0.5),
+                keras.layers.GlobalAveragePooling2D(),
                 keras.layers.Dense(units=units)
             ])
         elif self.model_name == "VGG":
