@@ -64,7 +64,6 @@
 ./assets/audio/data/Dataset/Other/1-77160-A-3.wav
 ./assets/audio/data/Dataset/Speech/97371.wav
 ./assets/audio/data/Dataset/Speech/67739.wav
-./assets/audio/data/Dataset/Doorbell/23568.wav
 ./assets/audio/data/Dataset/Drill/59051.wav
 ./assets/audio/data/Dataset/Speech/80641.wav
 ./assets/audio/data/Dataset/Crash/60748.wav
@@ -117,7 +116,6 @@
 ./assets/audio/data/Dataset/Speech/235114.wav
 ./assets/audio/data/Dataset/Crash/203373.wav
 ./assets/audio/data/Dataset/Bark/236041.wav
-./assets/audio/data/Dataset/Doorbell/11297.wav
 ./assets/audio/data/Dataset/Other/1-101296-A-19.wav
 ./assets/audio/data/Dataset/Other/1-17124-A-43.wav
 ./assets/audio/data/Dataset/Other/2-42101-A-43.wav
@@ -1022,7 +1020,6 @@
 ./assets/audio/data/Dataset/Speech/382762.wav
 ./assets/audio/data/Dataset/Bark/433697.wav
 ./assets/audio/data/Dataset/Speech/87633.wav
-./assets/audio/data/Dataset/Doorbell/61265.wav
 ./assets/audio/data/Dataset/Door/73071.wav
 ./assets/audio/data/Dataset/Doorbell/390964.wav
 ./assets/audio/data/Dataset/Speech/97828.wav
