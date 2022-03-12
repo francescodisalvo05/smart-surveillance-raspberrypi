@@ -51,11 +51,8 @@ def main(args):
                   pruning=True)    
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
-
-    # if save model..
-    model.save_tf('models_tf/model_test')
-
-    model.save_tflite('models_tflite/model.tflite')
+    model.save_tf('./assets/audio/models_tf')
+    model.save_tflite('./assets/audio/models_tflite/model.tflite')
 
     cm, f1_score = model.make_inference(test_ds)
 
