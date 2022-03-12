@@ -1,7 +1,7 @@
 import sys
 
-from src.audio.constants.path import SPLIT_BASE_PATH, AUGUMENTATION_PATH
-from src.audio.utils.signal_generator import SignalGenerator
+from constants.path import SPLIT_BASE_PATH, AUGUMENTATION_PATH
+from utils.signal_generator import SignalGenerator
 
 
 def get_data(labels, resampling, mfcc_options):

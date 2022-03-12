@@ -6,10 +6,10 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from src.audio.utils.signal_generator import SignalGenerator
-from src.audio.utils.inference_latency import print_latency
-from src.audio.models.ResNet import Residual
-from src.audio.models.MobileNetV2 import Stride2Block
+from utils.signal_generator import SignalGenerator
+from utils.inference_latency import print_latency
+from models.ResNet import Residual
+from models.MobileNetV2 import Stride2Block
 
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot

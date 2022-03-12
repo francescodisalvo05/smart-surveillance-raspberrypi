@@ -4,7 +4,7 @@ import os
 import shutil
 
 DATASET_FOLDER = '/Volumes/TOSHIBA EXT/DOMESTIC SOUNDS/Dataset/'
-BASE_PATH = 'assets/dataset_idx/'
+BASE_PATH = 'assets/audio/dataset_idx/'
 
 # files = ['new_idx_dev.csv','new_idx_eval.csv']
 files = ['new_idx_dev.csv']

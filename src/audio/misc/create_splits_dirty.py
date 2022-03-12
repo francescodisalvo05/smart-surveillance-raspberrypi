@@ -4,12 +4,12 @@ import argparse, os
 
 import sys
 
-sys.path.append('constants/')
+sys.path.append('src/audio/constants/')
 
 from misc import RANDOM_STATE
 
-DATASET = 'data/Dataset/'
-SPLIT_BASE_PATH = 'assets/dataset_split/'
+DATASET = 'assets/audio/data/Dataset/'
+SPLIT_BASE_PATH = 'assets/audio/dataset_split/'
 
 TRAIN_NAME = 'train_split_dirty.txt'
 VALIDATION_NAME = 'val_split_dirty.txt'

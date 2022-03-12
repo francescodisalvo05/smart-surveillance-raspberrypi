@@ -5,9 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import tensorflow_model_optimization as tfmot
 
-from src.audio.utils.data import get_data
-from src.audio.models.model import Model
-from src.audio.constants.misc import RANDOM_STATE
+from utils.data import get_data
+from models.model import Model
+from constants.misc import RANDOM_STATE
 
 import tensorflow as tf
 
