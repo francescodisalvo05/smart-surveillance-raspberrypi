@@ -122,7 +122,6 @@
 ./assets/audio/data/Dataset/Other/1-39835-A-9.wav
 ./assets/audio/data/Dataset/Crash/978.wav
 ./assets/audio/data/Dataset/Doorbell/411521.wav
-./assets/audio/data/Dataset/Doorbell/11297.wav
 ./assets/audio/data/Dataset/Door/36821.wav
 ./assets/audio/data/Dataset/Doorbell/197225.wav
 ./assets/audio/data/Dataset/Crash/204688.wav

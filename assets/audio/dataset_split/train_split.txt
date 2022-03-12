@@ -132,7 +132,6 @@
 ./assets/audio/data/Dataset/Drill/250061.wav
 ./assets/audio/data/Dataset/Drill/386272.wav
 ./assets/audio/data/Dataset/Drill/179725.wav
-./assets/audio/data/Dataset/Doorbell/23568.wav
 ./assets/audio/data/Dataset/Bark/347763.wav
 ./assets/audio/data/Dataset/Bark/236120.wav
 ./assets/audio/data/Dataset/Doorbell/218317.wav
@@ -545,7 +544,6 @@
 ./assets/audio/data/Dataset/Other/2-59565-A-46.wav
 ./assets/audio/data/Dataset/Drill/39533.wav
 ./assets/audio/data/Dataset/Speech/109883.wav
-./assets/audio/data/Dataset/Doorbell/61265.wav
 ./assets/audio/data/Dataset/Crash/70071.wav
 ./assets/audio/data/Dataset/Other/1-17124-A-43.wav
 ./assets/audio/data/Dataset/Crash/173591.wav
