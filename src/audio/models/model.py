@@ -6,10 +6,10 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from utils.signal_generator import SignalGenerator
-from utils.inference_latency import print_latency
-#from utils.ResNet import Residual
-from utils.MobileNetV2 import Stride2Block
+from src.audio.utils.signal_generator import SignalGenerator
+from src.audio.utils.inference_latency import print_latency
+from src.audio.models.ResNet import Residual
+from src.audio.models.MobileNetV2 import Stride2Block
 
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
@@ -84,27 +84,6 @@ class Model():
                 keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
                 keras.layers.BatchNormalization(momentum=0.1),
                 keras.layers.ReLU(),
-
-                #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
-                #keras.layers.Conv2D(filters=int(self.alpha*128), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
-
-                #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[2, 2], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
-                #keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
-
-                #keras.layers.DepthwiseConv2D(kernel_size=[3, 3], strides=[1, 1], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
-                #keras.layers.Conv2D(filters=int(self.alpha*256), kernel_size=[1, 1], strides=[1, 1], padding="same", use_bias=False),
-                #keras.layers.BatchNormalization(momentum=0.1),
-                #keras.layers.ReLU(),
 
                 keras.layers.GlobalAveragePooling2D(),
                 keras.layers.Dense(units=units)
