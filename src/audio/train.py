@@ -5,10 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import tensorflow_model_optimization as tfmot
 
-from utils.data import get_data
-from utils.model import Model
-from constants.split import ROOM_DICTIONARY
-from constants.misc import RANDOM_STATE
+from src.audio.utils.data import get_data
+from src.audio.models.model import Model
+from src.audio.constants.misc import RANDOM_STATE
 
 import tensorflow as tf
 
@@ -17,23 +16,21 @@ np.random.seed(RANDOM_STATE)
 
 def main(args):
 
-    '''16 kHz
-    MFCC_OPTIONS = {
-        'frame_length': 640 * 2, 'frame_step': 320 * 2, 'mfcc': True, 'lower_frequency': 20,
-        'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
-    }
-    resampling_rate = 16000
-    '''
-
-    '''44,1 kHz'''
-    MFCC_OPTIONS = {
-        'frame_length': 1764 *2 , 'frame_step': 882 *2, 'mfcc': True, 'lower_frequency': 20,
-        'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
-    }
-    resampling_rate = None
+    if args.resample:
+        MFCC_OPTIONS = {
+            'frame_length': 640 * 2, 'frame_step': 320 * 2, 'mfcc': True, 'lower_frequency': 20,
+            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
+        }
+        resampling_rate = 16000
+    else:
+        '''44,1 kHz'''
+        MFCC_OPTIONS = {
+            'frame_length': 1764 *2 , 'frame_step': 882 *2, 'mfcc': True, 'lower_frequency': 20,
+            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
+        }
+        resampling_rate = None
 
     labels = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
-    
 
     train_ds, val_ds, test_ds = get_data(
         labels=labels,
@@ -42,7 +39,6 @@ def main(args):
 
     for elem in train_ds:
       input_shape = elem[0].shape.as_list()
-      print(input_shape)
       break
 
     learning_rate = 0.001
@@ -59,7 +55,7 @@ def main(args):
     # if save model..
     model.save_tf('models_tf/model_test')
 
-    model.save_tflite('models_tflite/model_test_tflite/model.tflite')
+    model.save_tflite('models_tflite/model.tflite')
 
     cm, f1_score = model.make_inference(test_ds)
 
@@ -71,6 +67,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-e', '--epochs', type=int, default=20)
+    parser.add_argument('-r', '--resample', type=bool, default=False)
 
     args = parser.parse_args()
 

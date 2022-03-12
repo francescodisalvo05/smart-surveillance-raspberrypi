@@ -1,11 +1,7 @@
 import os
-
 import tensorflow as tf
-from scipy import signal
 
-import sys  
-sys.path.append('constants/')
-from split import ROOM_DICTIONARY
+from scipy import signal
 
 
 class SignalGenerator:
@@ -135,7 +131,7 @@ class SignalGenerator:
         # duplicate audios for augumentation
         if augumentation_path:
 
-            labels_to_augument = [l for l in ROOM_DICTIONARY[room].keys() if l not in ['Speech','Alarm']]
+            labels_to_augument = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
 
             # extract all the augumented files from the directory
             for c in labels_to_augument:
