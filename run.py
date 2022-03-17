@@ -23,8 +23,8 @@ logging.getLogger().setLevel(logging.INFO)
 from MQTT.DoSomething import DoSomething
 
 # TO DO: DO NOT LEAVE DATA LIKE THIS IN THE FINAL VERSION
-bot_token = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
-bot_chatID = '-1001708196634'
+# bot_token = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
+# bot_chatID = '-1001708196634'
 
 def main(args):
 
@@ -53,7 +53,7 @@ def main(args):
             temp_chunk = array('h',temp_data)
             volume = max(temp_chunk)
         
-            if volume >= 1000:
+            if volume >= 500:
                 break
 
         # record the audio file & stop stream
@@ -63,9 +63,9 @@ def main(args):
         # to do: convert number to label
         prediction, probability = make_inference(tf_mfccs, args.tflite_path)
 
-        if probability >= 0.8:
+        # if probability >= 0.8:
             # publish via MQTT
-            publish_outcome(publisher, prediction, probability)
+        publish_outcome(publisher, prediction, probability)
 
 
 def record_audio(args, p, stream):
@@ -79,6 +79,7 @@ def record_audio(args, p, stream):
         data = stream.read(args.chunk)
         frames.append(data)
     stream.stop_stream()
+    stream.close() # clean buffer??
 
     if args.store_files:
         FILENAME = 'audio_files/{}.wav'.format(str(datetime.now()).replace(" ","_"))
@@ -108,16 +109,19 @@ def record_audio(args, p, stream):
     return tf_audio
 
 
+
+
+
 def get_mfccs(tf_audio):
 
     # 49
 
     frame_length = 1764 * 2
     frame_step = 882 * 2
-    num_mel_bins = 40
+    num_mel_bins = 32
     low_freq = 20
     up_freq = 4000
-    num_coefficients = 10
+    num_coefficients = 20
 
     # 2 seconds
     spectrogram_width = ((44100 * 2 - frame_length) // frame_step) + 1
@@ -165,13 +169,7 @@ def publish_outcome(publisher, prediction, probability):
     
     timestamp = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    labels = [
-    'Bark',
-    'Door',
-    'Drill',
-    'Hammer',
-    'Gunshot',
-    'Glass']
+    labels = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
 
     body = {
         'timestamp': timestamp,
@@ -210,7 +208,7 @@ def publish_outcome(publisher, prediction, probability):
 
         current_time = now.strftime("%H:%M:%S")
 
-        message = "⚠️ *Allarme Intrusione* ⚠️\n" + "Orario🕚 :" + current_time
+        message = "*Allarme Intrusione* \n" + "Orario :" + current_time
         send_text(message)
         #send_photo( open("thief.jpg", 'rb'))
         #send_video( open("max.mp4", 'rb'))
@@ -226,7 +224,7 @@ if __name__ == '__main__':
     parser.add_argument('--chunk', type=int, default=4410, help='Set number of chunks')
     parser.add_argument('--seconds', type=int, default=2, help='Set the length of the recording (seconds)')
     parser.add_argument('--rate', type=int, default=44100, help='Set the rate')
-    parser.add_argument('--tflite_path', type=str, default='models_tflite/model_test_tflite/model_2s.tflite', help='tflite_path')
+    parser.add_argument('--tflite_path', type=str, default='/home/pi/WORK_DIR/domestic-sounds-main/assets/audio/models_tflite/model_test_tflite/model.tflite', help='tflite_path')
     parser.add_argument('--store_files', type=bool, default=False, help='Store the recorded audio files')
     
     args = parser.parse_args()
