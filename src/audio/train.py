@@ -44,10 +44,10 @@ def main(args):
     learning_rate = 0.001
     epochs = args.epochs
 
-    model = Model(model_name='DS-CNN', 
+    model = Model(model_name='MobileNet', 
                   n_classes=len(labels),
                   input_shape=input_shape, 
-                  alpha=0.8,
+                  alpha=2,
                   pruning=True)    
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
