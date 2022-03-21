@@ -54,9 +54,9 @@ def main(args):
     model.save_tf('./assets/audio/models_tf')
     model.save_tflite('./assets/audio/models_tflite/model.tflite')
 
-    cm, f1_score = model.make_inference(test_ds)
-
-    model.plot_stats(f1_score, cm, MFCC_OPTIONS, labels, resampling_rate)
+    if test_ds:
+        cm, f1_score = model.make_inference(test_ds) 
+        model.plot_stats(f1_score, cm, MFCC_OPTIONS, labels, resampling_rate)
 
 
 
