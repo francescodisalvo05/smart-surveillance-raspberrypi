@@ -35,7 +35,8 @@ def main(args):
     train_ds, val_ds, test_ds = get_data(
         labels=labels,
         mfcc_options=MFCC_OPTIONS,
-        resampling=resampling_rate)
+        resampling=resampling_rate,
+        only_train=args.only_train)
 
     for elem in train_ds:
       input_shape = elem[0].shape.as_list()
@@ -65,6 +66,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-e', '--epochs', type=int, default=20)
     parser.add_argument('-r', '--resample', type=bool, default=False)
+    parser.add_argument('-T', '--only_train', type=bool, default=True)
 
     args = parser.parse_args()
 
