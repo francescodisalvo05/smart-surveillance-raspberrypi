@@ -70,9 +70,9 @@ class SignalGenerator:
         else:
             rate = self.sampling_rate
 
-        zero_padding = tf.zeros([self.seconds * rate] - tf.shape(audio), dtype=tf.float32)
+        zero_padding = tf.zeros([int(self.seconds * rate)] - tf.shape(audio), dtype=tf.float32)
         audio = tf.concat([audio, zero_padding], 0)
-        audio.set_shape([self.seconds * rate])
+        audio.set_shape([int(self.seconds * rate)])
 
         return audio
 
@@ -110,8 +110,8 @@ class SignalGenerator:
         else:
             rate = self.sampling_rate
 
-        if tf.shape(audio) > self.seconds * rate:
-            audio = audio[:self.seconds * rate]
+        if tf.shape(audio) > int(self.seconds * rate):
+            audio = audio[:int(self.seconds * rate)]
         else:
             audio = self.pad(audio)
 
