@@ -42,7 +42,7 @@ with open(os.path.join(SPLIT_BASE_PATH, VALIDATION_NAME), 'w') as file:
 file.close()
 
 with open(os.path.join(SPLIT_BASE_PATH, TEST_NAME), 'w') as file:
-    for idx in range(len(x_val)):
+    for idx in range(len(x_test)):
         string = './{}{}/{}\n'.format(DATASET, y_test.iloc[idx], x_test.iloc[idx].fname)
         file.write(string)
 file.close()
