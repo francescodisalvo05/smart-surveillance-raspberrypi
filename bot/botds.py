@@ -2,6 +2,7 @@ from urllib.parse import uses_params
 from telegram.ext.callbackcontext import CallbackContext
 from datetime import datetime
 import logging
+import pandas as pd
 import time
 import requests
 import telegram
@@ -10,7 +11,7 @@ import csv
 import os.path
 import os
 import numpy as np
-
+import math
 
 TOKEN = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
 def send_text(bot_message):
@@ -18,7 +19,16 @@ def send_text(bot_message):
     send_text = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + '99706017' + '&parse_mode=Markdown&text=' + bot_message
     response = requests.get(send_text)
     return response.json()
-        
+
+def read_db():      
+    df = pd.read_csv("users.csv")
+    return df
+
+def update_db(df,index,column,value):
+    df[column] = value
+    df.at[index, column] = value
+    df.to_csv("users.csv")
+
 
 class Bot:
 
@@ -73,61 +83,41 @@ class Bot:
     def send_enable(self, chatbot, update) -> None:
         # write the chat id in the database
         chat_id = chatbot.message.chat_id
-        users = []
-        if not os.path.exists("users.csv"):
-                    users.append(chat_id)
-                    np.savetxt("users.csv",users,delimiter =", ", fmt ='% s')
-                    # send the confermation message
-                    enable_message = '✅ Riceverai tutti gli aggiornamenti sulla tua casa'
-                    chatbot.message.reply_text(enable_message)
-                
-        else:
-            with open('users.csv') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                for line in csv_reader:
-                    
-                    users.append(str(line).replace("[","").replace("]","").replace('\'',""))
-                    print(users)
+        db = read_db()
+        db.set_index('ids',inplace = True)
 
-            if str(chat_id) not in users:
-                users.append(chat_id)
-                with open("users.csv", 'a') as f:
-                    writer = csv.writer(f)
-                    writer.writerow(users)
-                    # send the confermation message
-                    enable_message = '✅ Riceverai tutti gli aggiornamenti sulla tua casa'
-                    chatbot.message.reply_text(enable_message)
-                
+        if chat_id in db.index:
+            if db.at[chat_id,'status'] == True:
+                enable_message = '❌ Sei già iscritto al servizio di notifiche'
+                chatbot.message.reply_text(enable_message)
             else:
-                chatbot.message.reply_text("Sei già iscritto al servizio di notifiche")
+                enable_message = '✅ Riceverai tutti gli aggiornamenti sulla tua casa'
+                update_db(db,chat_id,'status',True)
+                chatbot.message.reply_text(enable_message)
+        else:
+            enable_message = 'Non sei abilitato a questo servizio, contattare gli amministatori'
+            chatbot.message.reply_text(enable_message)
 
     def send_disable(self, chatbot, update) -> None:
         # write the chat id in the database
         chat_id = chatbot.message.chat_id
-        users = []
-        if not os.path.exists("users.csv"):
-                    enable_message = 'Non sei iscritto al servizio di notifiche'
-                    chatbot.message.reply_text(enable_message)
-                
-        else:
-            with open('users.csv') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                for line in csv_reader:
-                    users.append(str(line).replace("[","").replace("]","").replace('\'',""))
-                
-                if str(chat_id) in  users:
-                    users.remove(str(chat_id))
-                    enable_message = '❌ Non riceverai più alcuna notifica'
-                    chatbot.message.reply_text(enable_message)
-                    os.remove("users.csv")
-                    
-                    np.savetxt("users.csv",users,delimiter =", ", fmt ='% s')
-                        
-                else:
-                    enable_message = 'Non sei iscritto al servizio di notifiche'
-                    chatbot.message.reply_text(enable_message)
+        db = read_db()
+        db.set_index('ids',inplace = True)
 
-                    
+        if chat_id in db.index:
+            if db.at[chat_id,'status'] == True:
+                enable_message = '❌ Non riceverai più alcuna notifica'
+                chatbot.message.reply_text(enable_message)
+                update_db(db,chat_id,'status',False)
+
+
+            else:
+                enable_message = 'Non sei iscritto al servizio di notifiche'
+                chatbot.message.reply_text(enable_message)
+
+        else:
+            enable_message = 'Non sei abilitato a questo servizio, contattare gli amministatori'
+            chatbot.message.reply_text(enable_message)                    
 
     # message to send when /help is received
     def send_help(self, chatbot, update) -> None:
@@ -137,31 +127,34 @@ class Bot:
        
     # message to send when /enable is received
     def live_video(self, chatbot, update) -> None:
-        
-        if chatbot.message.chat_id == 99706017:
-            # send the confermation message
-            enable_message = 'Ciao "User" ecco il link'
+        chat_id = chatbot.message.chat_id
+        db = read_db()
+        db.set_index('ids',inplace = True)
+
+        if chat_id in db.index:
+            enable_message = 'Ciao, ecco il link:\n"https://domesticsounds_room1.it'
             chatbot.message.reply_text(enable_message)
             
         else: 
             chatbot.message.reply_text("Accesso negato❌")
     
     def report(self, chatbot, update) -> None:
-        strings = ""
-        if chatbot.message.chat_id == 99706017:
+        string = ""
+        chat_id = chatbot.message.chat_id
+        db = read_db()
+        db.set_index('ids',inplace = True)
+
+        if chat_id in db.index:
             if not os.path.exists("reports.csv"):
                 chatbot.message.reply_text("Non ci sono avvertimenti")
             
 
             enable_message = 'Ciao "User" ecco lo storico degli avvertimenti'
-            with open('reports.csv') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                for line in csv_reader:
-                    print(line)
-                    strings += "•" + str(line).replace("[","").replace("]","").replace('\'',"") + "\n"
-            
+            reports = np.genfromtxt('report.txt',dtype='str')
+            for report in reports:
+                string += "•" + report + "\n"
             chatbot.message.reply_text(enable_message)
-            chatbot.message.reply_text(strings)
+            chatbot.message.reply_text(string)
 
         else: 
             chatbot.message.reply_text("Accesso negato❌")
@@ -171,24 +164,17 @@ class Bot:
         reports = []
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        users = []
-        if os.path.exists("users.csv"):
-            with open('users.csv') as csv_file:
-                    csv_reader = csv.reader(csv_file)
-                    for line in csv_reader:
-                        users.append(str(line))
-        print(users)
-        if self.danger and '[\'99706017\']' in users:
+        db = read_db()
+        db.set_index('ids',inplace = True)
+        
+        if db.at[99706017,"status"] == True:
             message = "⚠️ *Allarme Intrusione* ⚠️\n" + "Orario🕚 :" + current_time
             send_text(message)
             reports.append(current_time)
-            if not os.path.exists("reports.csv"):
-                np.savetxt("reports.csv",reports,delimiter =", ", fmt ='% s')
-            else:
-                with open("reports.csv", 'a') as f:
-                    writer = csv.writer(f)
-                    writer.writerow(reports)
-        
+        arr = np.genfromtxt('reports.txt',dtype='str')
+        reports = np.append(arr,str(current_time))
+        np.savetxt('reports.txt', reports, delimiter=" ", fmt="%s") 
+    
         self.logger.info("Polling BOT.")
         self.updater.start_polling()
         # Run the BOT until you press Ctrl-C or the process receives SIGINT,
@@ -203,3 +189,4 @@ if __name__ == "__main__":
     BOT = Bot(True)
     BOT.run()
     
+
