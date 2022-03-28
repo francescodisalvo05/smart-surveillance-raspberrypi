@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-e', '--epochs', type=int, default=20)
     parser.add_argument('-r', '--resample', type=bool, default=False)
-    parser.add_argument('-T', '--only_train', type=bool, default=True)
+    parser.add_argument('-T', '--only_train', action='store_true')
 
     args = parser.parse_args()
 
