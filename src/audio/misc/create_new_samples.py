@@ -20,6 +20,9 @@ for label in os.listdir(DATASET_OLD_FOLDER):
 
     for audio_name in tqdm(os.listdir(os.path.join(DATASET_OLD_FOLDER,label))):
 
+        if audio_name.split(".")[1] != "wav":
+            continue
+
         path = os.path.join(DATASET_OLD_FOLDER, label, audio_name)
 
         _, audio = wavfile.read(path)
