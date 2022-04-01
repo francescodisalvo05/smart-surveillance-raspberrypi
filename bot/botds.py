@@ -15,8 +15,9 @@ import math
 
 
 TOKEN = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
+
+
 def send_text(bot_message,chat_id):
-        
     send_text = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(chat_id) + '&parse_mode=Markdown&text=' + bot_message
     response = requests.get(send_text)
     return response.json()
@@ -111,7 +112,6 @@ class Bot:
                 chatbot.message.reply_text(enable_message)
                 update_db(db,chat_id,'status',False)
 
-
             else:
                 enable_message = 'Non sei iscritto al servizio di notifiche'
                 chatbot.message.reply_text(enable_message)
@@ -169,12 +169,15 @@ class Bot:
 
     # start the bot
     def run(self) -> int:
+
         reports = []
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         db = read_db()
         db.set_index('ids',inplace = True)
+
         if self.danger:
+            
             if db.at[99706017,"status"] == True:
                 message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo:\nhttp://raspberrypi.local:8000/index.html"
                 send_text(message,99706017)
@@ -200,12 +203,4 @@ class Bot:
         # SIGTERM or SIGABRT. This should be used most of the time, since
         # start_polling() is non-blocking and will stop the BOT gracefully.
         self.updater.idle()
-        
-
-
-if __name__ == "__main__":
-
-    BOT = Bot(True)
-    BOT.run()
-    
 
