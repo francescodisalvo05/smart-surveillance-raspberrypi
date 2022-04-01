@@ -1,3 +1,5 @@
+# src : https://github.com/garyexplains/examples/blob/master/RPiCameraPython/mjpeg_cam.py
+
 import io
 import picamera
 import logging
