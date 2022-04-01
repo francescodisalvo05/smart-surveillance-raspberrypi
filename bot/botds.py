@@ -13,10 +13,11 @@ import os
 import numpy as np
 import math
 
+
 TOKEN = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
-def send_text(bot_message):
+def send_text(bot_message,chat_id):
         
-    send_text = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + '99706017' + '&parse_mode=Markdown&text=' + bot_message
+    send_text = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(chat_id) + '&parse_mode=Markdown&text=' + bot_message
     response = requests.get(send_text)
     return response.json()
 
@@ -25,7 +26,6 @@ def read_db():
     return df
 
 def update_db(df,index,column,value):
-    df[column] = value
     df.at[index, column] = value
     df.to_csv("users.csv")
 
@@ -42,6 +42,7 @@ class Bot:
         self.updater = Updater(TOKEN)
         self.dispatcher = self.updater.dispatcher
         self.danger = danger
+        
         
         
         enable_handler = CommandHandler("enable", self.send_enable)
@@ -74,7 +75,7 @@ class Bot:
         welcome_message =  "*Ciao, sono il bot che controlla la tua casa* \n\n"
         welcome_message += '🗞 Digita: /enable per ricevere gli avvisi!\n\n'
         welcome_message += '❌ Digita: /disable per disattivare le notifiche!\n\n'
-        welcome_message += '📓 Digita: /recap per visualizzare lo storico degli avvisi!\n\n'
+        welcome_message += '📓 Digita: /report per visualizzare lo storico degli avvisi!\n\n'
         welcome_message += '🎥 Digita: /live_video per guardare cosa sta succedendo a casa.\n\n'
         welcome_message += '🆘 Digita: /help per contattare gli autori.\n\n'
         chatbot.message.reply_text(welcome_message)
@@ -88,7 +89,7 @@ class Bot:
 
         if chat_id in db.index:
             if db.at[chat_id,'status'] == True:
-                enable_message = '❌ Sei già iscritto al servizio di notifiche'
+                enable_message = '✅ Sei già iscritto al servizio di notifiche'
                 chatbot.message.reply_text(enable_message)
             else:
                 enable_message = '✅ Riceverai tutti gli aggiornamenti sulla tua casa'
@@ -121,8 +122,8 @@ class Bot:
 
     # message to send when /help is received
     def send_help(self, chatbot, update) -> None:
-        help_message =  'Author: @GianlucaLM\n'
-        help_message += 'Scrivimi per qualsiasi problema\n'
+        help_message =  'Authors: @GianlucaLM  @francescodis  @leomaggio \n'
+        help_message += 'Scrivici per qualsiasi problema\n'
         chatbot.message.reply_text(help_message, parse_mode = telegram.ParseMode.MARKDOWN)
        
     # message to send when /enable is received
@@ -130,11 +131,18 @@ class Bot:
         chat_id = chatbot.message.chat_id
         db = read_db()
         db.set_index('ids',inplace = True)
-
+        
         if chat_id in db.index:
-            enable_message = 'Ciao, ecco il link:\n"https://domesticsounds_room1.it'
-            chatbot.message.reply_text(enable_message)
-            
+            if chat_id == 99706017:
+                enable_message = 'Ciao Gianluca, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                chatbot.message.reply_text(enable_message)
+            if chat_id == 129347830:
+                enable_message = 'Ciao Francesco, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                chatbot.message.reply_text(enable_message)
+            if chat_id == 171207972:
+                enable_message = 'Ciao Leonardo, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                chatbot.message.reply_text(enable_message)
+                   
         else: 
             chatbot.message.reply_text("Accesso negato❌")
     
@@ -145,12 +153,12 @@ class Bot:
         db.set_index('ids',inplace = True)
 
         if chat_id in db.index:
-            if not os.path.exists("reports.csv"):
+            if not os.path.exists("reports.txt"):
                 chatbot.message.reply_text("Non ci sono avvertimenti")
             
 
             enable_message = 'Ciao "User" ecco lo storico degli avvertimenti'
-            reports = np.genfromtxt('report.txt',dtype='str')
+            reports = np.genfromtxt('reports.txt',dtype='str')
             for report in reports:
                 string += "•" + report + "\n"
             chatbot.message.reply_text(enable_message)
@@ -166,14 +174,25 @@ class Bot:
         current_time = now.strftime("%H:%M:%S")
         db = read_db()
         db.set_index('ids',inplace = True)
+        if self.danger:
+            if db.at[99706017,"status"] == True:
+                message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo:\nhttp://raspberrypi.local:8000/index.html"
+                send_text(message,99706017)
+            
         
-        if db.at[99706017,"status"] == True:
-            message = "⚠️ *Allarme Intrusione* ⚠️\n" + "Orario🕚 :" + current_time
-            send_text(message)
+            if db.at[129347830,"status"] == True:
+                message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo: \n\nhttp://raspberrypi.local:8000/index.html"
+                send_text(message,129347830)
+            
+
+            if db.at[171207972,"status"] == True:
+                message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo: \n\nhttp://raspberrypi.local:8000/index.html"
+                send_text(message,171207972)
+            
             reports.append(current_time)
-        arr = np.genfromtxt('reports.txt',dtype='str')
-        reports = np.append(arr,str(current_time))
-        np.savetxt('reports.txt', reports, delimiter=" ", fmt="%s") 
+            arr = np.genfromtxt('reports.txt',dtype='str')
+            reports = np.append(arr,str(current_time))
+            np.savetxt('reports.txt', reports, delimiter=" ", fmt="%s")
     
         self.logger.info("Polling BOT.")
         self.updater.start_polling()
