@@ -6,27 +6,26 @@ import json
 import datetime
 
 from picamera import PiCamera
+from bot.botds import Bot
 
 
 class Subscriber(DoSomething):
 
     def notify(self, topic, msg):
+
         input_json = json.loads(msg)
         
         timestamp = input_json['timestamp']
-        # use them?
         label = input_json['class']
         confidence = input_json['confidence']
 
-        # send message here
+        img_path = './assets/storage/{}.jpg'.format('test')
+
         camera = PiCamera()
-        camera.start_preview()
-        
-        time.sleep(2) # focus
-        img_path = './assets/storage/{}.jpg'.format('test') # use a clear version of timestamp
-        
+        camera.start_preview()    
         camera.capture(img_path)
         camera.stop_preview()
+        camera.close()
 
         # start streaming? 
 
