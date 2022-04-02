@@ -1,9 +1,10 @@
 from MQTT.MyMQTT import MyMQTT
-
+from bot.botds import Bot
 
 class DoSomething():
     def __init__(self, clientID):
         # create an instance of MyMQTT class
+        self.bot = Bot(True)
         self.clientID = clientID
         self.myMqttClient = MyMQTT(self.clientID, "test.mosquitto.org", 1883, self)
 
@@ -20,7 +21,3 @@ class DoSomething():
     def notify(self, topic, msg):
         # manage here your received message. You can perform some error-check here
         print ("received '%s' under topic '%s'" % (msg, topic))
-
-
-
-
