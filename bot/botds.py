@@ -183,12 +183,12 @@ class Bot:
         reports = np.append(arr,str(current_time))
         np.savetxt('reports.txt', reports, delimiter=" ", fmt="%s")
     
-        self.logger.info("Polling BOT.")
-        self.updater.start_polling()
+        # self.logger.info("Polling BOT.")
+        # self.updater.start_polling()
         # Run the BOT until you press Ctrl-C or the process receives SIGINT,
         # SIGTERM or SIGABRT. This should be used most of the time, since
         # start_polling() is non-blocking and will stop the BOT gracefully.
-        self.updater.idle()
+        # self.updater.idle()
 
 
     def _send_text(self,bot_message,chat_id):
