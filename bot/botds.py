@@ -58,12 +58,12 @@ class Bot:
 
     # message to send when the bot is started
     def send_start(self, chatbot, update) -> None:
-        welcome_message =  "*Ciao, sono il bot che controlla la tua casa* \n\n"
-        welcome_message += '🗞 Digita: /enable per ricevere gli avvisi!\n\n'
-        welcome_message += '❌ Digita: /disable per disattivare le notifiche!\n\n'
-        welcome_message += '📓 Digita: /report per visualizzare lo storico degli avvisi!\n\n'
-        welcome_message += '🎥 Digita: /live_video per guardare cosa sta succedendo a casa.\n\n'
-        welcome_message += '🆘 Digita: /help per contattare gli autori.\n\n'
+        welcome_message =  "*Hello, I am the bot that will keep your home safe* \n\n"
+        welcome_message += '🗞 Type: /enable in order to enable the notifications!\n\n'
+        welcome_message += '❌ Type: /disable in order to disable the notifications!\n\n'
+        welcome_message += '📓 Type: /report in order to see the full report of alarms!\n\n'
+        welcome_message += '🎥 Type: /live_video in order to receive a live video of your house!.\n\n'
+        welcome_message += '🆘 Type: /help in order to contact the authors!\n\n'
         chatbot.message.reply_text(welcome_message)
     
    
@@ -75,14 +75,14 @@ class Bot:
 
         if chat_id in db.index:
             if db.at[chat_id,'status'] == True:
-                enable_message = '✅ Sei già iscritto al servizio di notifiche'
+                enable_message = '✅ The notifications are already enabled'
                 chatbot.message.reply_text(enable_message)
             else:
-                enable_message = '✅ Riceverai tutti gli aggiornamenti sulla tua casa'
+                enable_message = "✅ You'll receive all the notifications"
                 self._update_db(db,chat_id,'status',True)
                 chatbot.message.reply_text(enable_message)
         else:
-            enable_message = 'Non sei abilitato a questo servizio, contattare gli amministatori'
+            enable_message = "You don't have the permission for this service, contact the authors"
             chatbot.message.reply_text(enable_message)
 
     def send_disable(self, chatbot, update) -> None:
@@ -93,22 +93,22 @@ class Bot:
 
         if chat_id in db.index:
             if db.at[chat_id,'status'] == True:
-                enable_message = '❌ Non riceverai più alcuna notifica'
+                enable_message = "❌ You won't receive other notifications"
                 chatbot.message.reply_text(enable_message)
                 self._update_db(db,chat_id,'status',False)
 
             else:
-                enable_message = 'Non sei iscritto al servizio di notifiche'
+                enable_message = "You are not subscribed to the notification service"
                 chatbot.message.reply_text(enable_message)
 
         else:
-            enable_message = 'Non sei abilitato a questo servizio, contattare gli amministatori'
+            enable_message = "You don't have the permission for this service, contact the authors"
             chatbot.message.reply_text(enable_message)                    
 
     # message to send when /help is received
     def send_help(self, chatbot, update) -> None:
         help_message =  'Authors: @GianlucaLM  @francescodis  @leomaggio \n'
-        help_message += 'Scrivici per qualsiasi problema\n'
+        help_message += 'Feel free to write us!\n'
         chatbot.message.reply_text(help_message, parse_mode = telegram.ParseMode.MARKDOWN)
        
     # message to send when /enable is received
@@ -119,17 +119,17 @@ class Bot:
         
         if chat_id in db.index:
             if chat_id == 99706017:
-                enable_message = 'Ciao Gianluca, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                enable_message = 'Hey Gianluca, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
                 chatbot.message.reply_text(enable_message)
             if chat_id == 129347830:
-                enable_message = 'Ciao Francesco, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                enable_message = 'Hey Francesco, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
                 chatbot.message.reply_text(enable_message)
             if chat_id == 171207972:
-                enable_message = 'Ciao Leonardo, ecco il link:\n"http://raspberrypi.local:8000/index.html'
+                enable_message = 'Hey Leonardo, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
                 chatbot.message.reply_text(enable_message)
                    
         else: 
-            chatbot.message.reply_text("Accesso negato❌")
+            chatbot.message.reply_text("Access denied ❌")
     
     def report(self, chatbot, update) -> None:
         string = ""
@@ -139,10 +139,10 @@ class Bot:
 
         if chat_id in db.index:
             if not os.path.exists("bot/reports.txt"):
-                chatbot.message.reply_text("Non ci sono avvertimenti")
+                chatbot.message.reply_text("There are no events")
             
 
-            enable_message = 'Ciao "User" ecco lo storico degli avvertimenti'
+            enable_message = 'Hey "User", this is the full report'
             reports = np.genfromtxt('bot/reports.txt',dtype='str')
             for report in reports:
                 string += "•" + report + "\n"
@@ -150,7 +150,7 @@ class Bot:
             chatbot.message.reply_text(string)
 
         else: 
-            chatbot.message.reply_text("Accesso negato❌")
+            chatbot.message.reply_text("Access denied negato❌")
 
     # start the bot
     def send_alarm(self,timestampm,img_path) -> int:
@@ -162,21 +162,21 @@ class Bot:
         db.set_index('ids',inplace = True)
             
         if db.at[99706017,"status"] == True:
-            message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo:\nhttp://raspberrypi.local:8000/index.html"
+            message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,99706017)
-            self._send_photo(open(img_path, 'rb'),99706017)
+            self._send_video(open(img_path, 'rb'),99706017)
         
     
         if db.at[129347830,"status"] == True:
-            message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo: \n\nhttp://raspberrypi.local:8000/index.html"
+            message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,129347830)
-            self._send_photo(open(img_path, 'rb'),129347830)
+            self._send_video(open(img_path, 'rb'),129347830)
         
 
         if db.at[171207972,"status"] == True:
-            message = "⚠️ *Allarme Intrusione* ⚠️\n" + "🕚 Orario: " + current_time + "\n\nDai un'occhiata a cosa sta succedendo: \n\nhttp://raspberrypi.local:8000/index.html"
+            message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,171207972)
-            self._send_photo(open(img_path, 'rb'),171207972)
+            self._send_video(open(img_path, 'rb'),171207972)
         
         reports.append(current_time)
         arr = np.genfromtxt('bot/reports.txt',dtype='str')
@@ -196,10 +196,10 @@ class Bot:
         response = requests.get(send_text)
         return response.json()
 
-    def _send_photo(self,file_opened,bot_chatID):
-        method = "sendPhoto"
+    def _send_video(self,file_opened,bot_chatID):
+        method = "sendVideo"
         params = {'chat_id': bot_chatID}
-        files = {'photo': file_opened}
+        files = {'video': file_opened}
         url = 'https://api.telegram.org/bot' + self.TOKEN + "/"
         response = requests.post(url + method, params, files=files)
         return response.json()
