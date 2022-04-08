@@ -153,7 +153,7 @@ class Bot:
             chatbot.message.reply_text("Access denied negato❌")
 
     # start the bot
-    def send_alarm(self,timestampm,img_path) -> int:
+    def send_alarm(self,timestampm,input_type, path) -> int:
 
         reports = []
         now = datetime.now()
@@ -164,19 +164,30 @@ class Bot:
         if db.at[99706017,"status"] == True:
             message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,99706017)
-            self._send_video(open(img_path, 'rb'),99706017)
+
+            if input_type == 'video':
+                self._send_video(open(path, 'rb'),99706017)
+            elif input_type == 'img':
+                self._send_img(open(path, 'rb'),99706017)
         
     
         if db.at[129347830,"status"] == True:
             message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,129347830)
-            self._send_video(open(img_path, 'rb'),129347830)
+            if input_type == 'video':
+                self._send_video(open(path, 'rb'),129347830)
+            elif input_type == 'img':
+                self._send_img(open(path, 'rb'),129347830)
+            
         
 
         if db.at[171207972,"status"] == True:
             message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
             self._send_text(message,171207972)
-            self._send_video(open(img_path, 'rb'),171207972)
+            if input_type == 'video':
+                self._send_video(open(path, 'rb'),171207972)
+            elif input_type == 'img':
+                self._send_img(open(path, 'rb'),171207972)
         
         reports.append(current_time)
         arr = np.genfromtxt('bot/reports.txt',dtype='str')
@@ -196,6 +207,7 @@ class Bot:
         response = requests.get(send_text)
         return response.json()
 
+
     def _send_video(self,file_opened,bot_chatID):
         method = "sendVideo"
         params = {'chat_id': bot_chatID}
@@ -204,9 +216,20 @@ class Bot:
         response = requests.post(url + method, params, files=files)
         return response.json()
 
+
+    def _send_img(self,file_opened,bot_chatID):
+        method = "sendPhoto"
+        params = {'chat_id': bot_chatID}
+        files = {'photo': file_opened}
+        url = 'https://api.telegram.org/bot' + self.TOKEN + "/"
+        response = requests.post(url + method, params, files=files)
+        return response.json()
+
+
     def _read_db(self):      
         df = pd.read_csv("bot/users.csv")
         return df
+
 
     def _update_db(self,df,index,column,value):
         df.at[index, column] = value
