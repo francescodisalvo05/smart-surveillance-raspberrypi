@@ -4,6 +4,7 @@ import os
 import time
 import json
 import datetime
+import time
 
 from picamera import PiCamera
 from bot.botds import Bot
@@ -16,39 +17,46 @@ class Subscriber(DoSomething):
     def notify(self, topic, msg):
 
         input_json = json.loads(msg)
-        
+
         timestamp = input_json['timestamp']
         label = input_json['class']
-        confidence = input_json['confidence']
 
-        time_str = time.strftime("%Y%m%d-%H%M%S")
-        video_path = './assets/storage/{}.h264'.format(time_str)
-        new_video_path = './assets/storage/{}.mp4'.format(time_str)
+        if label == 'bark': # not an intrusion
+            return 
 
-        
+        # keep a window of 5 minutes, if the bot has already sent an alarm
+        # in the last 5 minutes, don't do anythings
+        if time.time() - self.last_alarm > 120:  # update to 300
 
-        """
-        img_path = './assets/storage/img.jpeg'
-        camera = PiCamera()
-        camera.start_preview()    
-        camera.capture(img_path)
-        camera.stop_preview()
-        camera.close()"""
+            self.last_alarm = time.time()
 
-        camera = PiCamera()
-        camera.resolution = (480, 360)
-        camera.rotation = 180
-        camera.start_recording(video_path)
-        camera.wait_recording(30)
-        camera.stop_recording()
-        camera.close()
+            if label == 'human': # send image with patch
+                img_path = input_json['path']
+                self.bot.send_alarm(timestamp,'img',img_path)
 
-        command = "ffmpeg -i {} -y -vf scale=-1:360 {}".format(video_path, new_video_path)
-        subprocess.call([command], shell=True)
+            else: # send video
 
-        self.bot.send_alarm(timestamp,new_video_path)
+                time_str = time.strftime("%Y%m%d-%H%M%S")
+                video_path = './assets/storage/{}.h264'.format(time_str)
+                new_video_path = './assets/storage/{}.mp4'.format(time_str)
 
-        os.remove(video_path)
+                camera = PiCamera()
+                camera.resolution = (480, 360)
+                camera.rotation = 180
+                camera.start_recording(video_path)
+                camera.wait_recording(30)
+                camera.stop_recording()
+                camera.close()
+
+                command = "ffmpeg -i {} -y -vf scale=-1:360 {}".format(video_path, new_video_path)
+                subprocess.call([command], shell=True)
+
+                os.remove(video_path)
+
+                self.bot.send_alarm(timestamp,'video',new_video_path)
+
+            
+
 
 
 if __name__ == "__main__":
