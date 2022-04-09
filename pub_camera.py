@@ -10,7 +10,6 @@ from picamera import PiCamera
 
 import io
 
-from PIL import Image
 
 def start_recoring(publisher):
 
@@ -30,11 +29,17 @@ def start_recoring(publisher):
 
 			image = frame.array
 
+			
+
 			gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 			boxes, weights = hog.detectMultiScale(gray, winStride=(10,10))
 
-			boxes = non_max_suppression_fast(boxes, 1.0)
+			boxes = _non_max_suppression_fast(boxes, 1.0)
 			boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
+
+			if len(boxes) == 0:
+				# write/overwrite for the potential video
+				cv2.imwrite('assets/storage/last_image.png', image)
 
 			for ((xA, yA, xB, yB),weight) in zip(boxes,weights):
 
@@ -46,10 +51,11 @@ def start_recoring(publisher):
 					img_path = f'assets/storage/photo/{timestamp}.png'
 
 					cv2.imwrite(img_path, image)
+					cv2.imwrite('assets/storage/last_image.png', image)
 
 					body = {
 							'timestamp': timestamp,
-							'class': 'human', 
+							'class': 'Human', 
 							'path': img_path 
 					}
 
@@ -58,14 +64,13 @@ def start_recoring(publisher):
 					rawCapture.truncate(0) 
 					rawCapture.seek(0)
 
-					return
+					return 
 
 			rawCapture.truncate(0) 
 			rawCapture.seek(0)
 
 
-
-def non_max_suppression_fast(boxes, overlapThresh):
+def _non_max_suppression_fast(boxes, overlapThresh):
 	# if there are no boxes, return an empty list
 	if len(boxes) == 0:
 		return []
@@ -110,6 +115,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
 	# return only the bounding boxes that were picked using the
 	# integer data type
 	return boxes[pick].astype("int")
+
 
 
 if __name__ == "__main__":
