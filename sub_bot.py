@@ -21,21 +21,21 @@ class Subscriber(DoSomething):
         timestamp = input_json['timestamp']
         label = input_json['class']
 
-        if label == 'bark': # not an intrusion
+        if label == 'Bark' or label == 'Doorbell': # not an intrusion
             return 
 
         # keep a window of 5 minutes, if the bot has already sent an alarm
         # in the last 5 minutes, don't do anythings
-        if time.time() - self.last_alarm > 120:  # update to 300
+        if time.time() - self.last_alarm > 10:  # to do : update to 300!
 
             self.last_alarm = time.time()
 
             if label == 'human': # send image with patch
                 img_path = input_json['path']
-                self.bot.send_alarm(timestamp,'img',img_path)
+                self.bot.send_alarm(timestamp,'img',label, img_path)
 
             else: # send video
-
+                """
                 time_str = time.strftime("%Y%m%d-%H%M%S")
                 video_path = './assets/storage/{}.h264'.format(time_str)
                 new_video_path = './assets/storage/{}.mp4'.format(time_str)
@@ -52,8 +52,8 @@ class Subscriber(DoSomething):
                 subprocess.call([command], shell=True)
 
                 os.remove(video_path)
-
-                self.bot.send_alarm(timestamp,'video',new_video_path)
+                """
+                self.bot.send_alarm(timestamp,'img',label,'assets/storage/last_image.png')
 
             
 
