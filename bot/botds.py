@@ -12,6 +12,7 @@ import os.path
 import os
 import numpy as np
 import math
+from bot_settings import * 
 
 
 class Bot:
@@ -22,7 +23,7 @@ class Bot:
             level=logging.INFO,
         )
 
-        self.TOKEN = '5165021744:AAGqhFc_5heY5EXaBulsRy_HGeC67diZFGs'
+        self.TOKEN = TOKEN
 
         self.logger = logging.getLogger("LOG")
         self.logger.info("Starting BOT.")
@@ -62,7 +63,6 @@ class Bot:
         welcome_message += '🗞 Type: /enable in order to enable the notifications!\n\n'
         welcome_message += '❌ Type: /disable in order to disable the notifications!\n\n'
         welcome_message += '📓 Type: /report in order to see the full report of alarms!\n\n'
-        welcome_message += '🎥 Type: /live_video in order to receive a live video of your house!.\n\n'
         welcome_message += '🆘 Type: /help in order to contact the authors!\n\n'
         chatbot.message.reply_text(welcome_message)
     
@@ -111,25 +111,6 @@ class Bot:
         help_message += 'Feel free to write us!\n'
         chatbot.message.reply_text(help_message, parse_mode = telegram.ParseMode.MARKDOWN)
        
-    # message to send when /enable is received
-    def live_video(self, chatbot, update) -> None:
-        chat_id = chatbot.message.chat_id
-        db = self._read_db()
-        db.set_index('ids',inplace = True)
-        
-        if chat_id in db.index:
-            if chat_id == 99706017:
-                enable_message = 'Hey Gianluca, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
-                chatbot.message.reply_text(enable_message)
-            if chat_id == 129347830:
-                enable_message = 'Hey Francesco, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
-                chatbot.message.reply_text(enable_message)
-            if chat_id == 171207972:
-                enable_message = 'Hey Leonardo, here\'s the link: \n"http://raspberrypi.local:8000/index.html'
-                chatbot.message.reply_text(enable_message)
-                   
-        else: 
-            chatbot.message.reply_text("Access denied ❌")
     
     def report(self, chatbot, update) -> None:
         string = ""
@@ -156,37 +137,19 @@ class Bot:
     def send_alarm(self,timestampm,input_type, label, path) -> int:
 
         reports = []
-        current_time = datetime.now().strftime("%H:%M:%S")
+        current_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         db = self._read_db()
         db.set_index('ids',inplace = True)
-            
-        if db.at[99706017,"status"] == True:
-            # message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
-            # self._send_text(message,99706017)
 
-            if input_type == 'video':
-                self._send_video(open(path, 'rb'),99706017)
-            elif input_type == 'img':
-                self._send_img(open(path, 'rb'),label,99706017)
-        
-    
-        if db.at[129347830,"status"] == True:
-            # message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
-            # self._send_text(message,129347830)
-            if input_type == 'video':
-                self._send_video(open(path, 'rb'),129347830)
-            elif input_type == 'img':
-                self._send_img(open(path, 'rb'),label,129347830)
-            
-        
+        for chat_id in CHAT_IDS:
+            if db.at[chat_id,"status"] == True:
+                # message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
+                # self._send_text(message,99706017)
 
-        if db.at[171207972,"status"] == True:
-            # message = "⚠️ *Intrusion Alert* ⚠️\n" + "🕚 " + current_time
-            # self._send_text(message,171207972)
-            if input_type == 'video':
-                self._send_video(open(path, 'rb'),171207972)
-            elif input_type == 'img':
-                self._send_img(open(path, 'rb'),label,171207972)
+                if input_type == 'video':
+                    self._send_video(open(path, 'rb'),chat_id)
+                elif input_type == 'img':
+                    self._send_img(open(path, 'rb'),label,chat_id)
         
         reports.append(current_time)
         arr = np.genfromtxt('bot/reports.txt',dtype='str')
