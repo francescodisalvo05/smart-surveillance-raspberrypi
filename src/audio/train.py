@@ -30,7 +30,7 @@ def main(args):
         }'''
         MFCC_OPTIONS = {
             'frame_length': 1764 *2 , 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
-            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 20
+            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
         }
         resampling_rate = None
 
