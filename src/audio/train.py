@@ -73,7 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('-T', '--only_train', action='store_true')
 
     parser.add_argument('-m', '--model_name', required=True, choices=['DS-CNN','VGG','VGGish',
-                                                                      'Yamnet','MusicTagging',
+                                                                      'Yamnet','MusicTaggerCNN',
                                                                       'MobileNet13','MobileNet3',
                                                                       'MobileNet2'])
 
