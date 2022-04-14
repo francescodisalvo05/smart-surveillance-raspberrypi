@@ -23,14 +23,18 @@ def main(args):
         }
         resampling_rate = 16000
     else:
-        '''44,1 kHz'''
+        '''44,1 kHz
         MFCC_OPTIONS = {
             'frame_length': 1764 *2 , 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
             'upper_frequency': 4000, 'num_mel_bins': 32, 'num_coefficients': 20
+        }'''
+        MFCC_OPTIONS = {
+            'frame_length': 1764 *2 , 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
+            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 20
         }
         resampling_rate = None
 
-    labels = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
+    labels = ['Bark', 'Doorbell', 'Drill', 'Hammer', 'Glass', 'Speech']
 
     train_ds, val_ds, test_ds = get_data(
         labels=labels,
@@ -45,15 +49,15 @@ def main(args):
     learning_rate = 0.001
     epochs = args.epochs
 
-    model = Model(model_name='MobileNet', 
+    model = Model(model_name=args.model_name, 
                   n_classes=len(labels),
                   input_shape=input_shape, 
-                  alpha=2,
+                  alpha=1,
                   pruning=True)    
 
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
     model.save_tf('./assets/audio/models_tf')
-    model.save_tflite('./assets/audio/models_tflite/model.tflite')
+    model.save_tflite(f'./assets/audio/models_tflite/{args.model_name}.tflite')
 
     if test_ds:
         cm, f1_score = model.make_inference(test_ds) 
@@ -67,6 +71,11 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--epochs', type=int, default=20)
     parser.add_argument('-r', '--resample', type=bool, default=False)
     parser.add_argument('-T', '--only_train', action='store_true')
+
+    parser.add_argument('-m', '--model_name', required=True, choices=['DS-CNN','VGG','VGGish',
+                                                                      'Yamnet','MusicTagging',
+                                                                      'MobileNet13','MobileNet3',
+                                                                      'MobileNet2'])
 
     args = parser.parse_args()
 
