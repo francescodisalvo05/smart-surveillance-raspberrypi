@@ -8,6 +8,7 @@ import time
 
 from picamera import PiCamera
 from bot.botds import Bot
+from bot.botmessage import Bot
 
 import subprocess
 
@@ -33,6 +34,7 @@ class Subscriber(DoSomething):
             if label == 'human': # send image with patch
                 img_path = input_json['path']
                 self.bot.send_alarm(timestamp,'img',label, img_path)
+
 
             else: # send video
                 """
