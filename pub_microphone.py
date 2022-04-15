@@ -1,30 +1,21 @@
 import pyaudio
 import json
-import io
 import wave
 import time
 import os
-
 import tensorflow as tf
 import numpy as np
 
 from datetime import datetime
-from scipy.io import wavfile
 from array import array
 from argparse import ArgumentParser
 from io import BytesIO
-from collections import Counter
-import requests
 from datetime import datetime
 from pytz import timezone
+from src.MQTT.DoSomething import DoSomething
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
-
-from src.MQTT.DoSomething import DoSomething
-
-from picamera import PiCamera
-from time import sleep
 
 
 def main(args):
@@ -41,7 +32,6 @@ def main(args):
     publisher.run()
 
     time.sleep(1)
-
     logging.info("The mic is running...")
 
     while True:
@@ -49,7 +39,6 @@ def main(args):
         stream = p.open(format=pyaudio.paInt16, channels=1, rate=args.rate, input=True, frames_per_buffer=args.chunk)
 
         # wait for a trigger
-        
         while(True):
             temp_data = stream.read(args.chunk)
             temp_chunk = array('h',temp_data)
@@ -61,14 +50,11 @@ def main(args):
         # record the audio file & stop stream
         tf_audio = record_audio(args, p, stream)
         tf_mfccs = get_mfccs(tf_audio,args.seconds)
-        
 
         prediction, probability = make_inference(tf_mfccs, args.tflite_path)
         
-
         if probability >= 0.5:
             publish_outcome(publisher, prediction, probability)
-
 
 
 def record_audio(args, p, stream):
@@ -113,17 +99,13 @@ def record_audio(args, p, stream):
     return tf_audio
 
 
-
 def get_mfccs(tf_audio,seconds):
 
     frame_length = 1764 * 2
     frame_step = 882 * 2
     num_mel_bins = 32
-    low_freq = 20
-    up_freq = 4000
     num_coefficients = 20
 
-    # 2 seconds
     spectrogram_width = ((int(44100 * seconds) - frame_length) // frame_step) + 1
     num_spectrogram_bins = frame_length // 2 + 1
 
