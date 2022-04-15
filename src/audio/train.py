@@ -1,18 +1,17 @@
 import argparse
 import numpy as np
-import os
-import seaborn as sns
-import matplotlib.pyplot as plt
-import tensorflow_model_optimization as tfmot
 
 from utils.data import get_data
-from models.model import Model
-from constants.misc import RANDOM_STATE
+from models.trainer import Trainer
 
 import tensorflow as tf
+import tensorflow_model_optimization as tfmot
+
+RANDOM_STATE = 42
 
 tf.random.set_seed(RANDOM_STATE)
 np.random.seed(RANDOM_STATE)
+
 
 def main(args):
 
@@ -23,24 +22,18 @@ def main(args):
         }
         resampling_rate = 16000
     else:
-        '''44,1 kHz
         MFCC_OPTIONS = {
             'frame_length': 1764 *2 , 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
             'upper_frequency': 4000, 'num_mel_bins': 32, 'num_coefficients': 20
-        }'''
-        MFCC_OPTIONS = {
-            'frame_length': 1764 *2 , 'frame_step': 882 * 2, 'mfcc': True, 'lower_frequency': 20,
-            'upper_frequency': 4000, 'num_mel_bins': 40, 'num_coefficients': 10
         }
         resampling_rate = None
 
-    labels = ['Bark', 'Doorbell', 'Drill', 'Hammer', 'Glass', 'Speech']
+    labels = ['Bark', 'Doorbell', 'Drill', 'Glass', 'Hammer', 'Speech']
 
     train_ds, val_ds, test_ds = get_data(
         labels=labels,
         mfcc_options=MFCC_OPTIONS,
-        resampling=resampling_rate,
-        only_train=args.only_train)
+        resampling=resampling_rate)
 
     for elem in train_ds:
       input_shape = elem[0].shape.as_list()
@@ -49,7 +42,7 @@ def main(args):
     learning_rate = 0.001
     epochs = args.epochs
 
-    model = Model(model_name=args.model_name, 
+    model = Trainer(model_name=args.model_name, 
                   n_classes=len(labels),
                   input_shape=input_shape, 
                   alpha=1,
@@ -62,7 +55,6 @@ def main(args):
     if test_ds:
         cm, f1_score = model.make_inference(test_ds) 
         model.plot_stats(f1_score, cm, MFCC_OPTIONS, labels, resampling_rate)
-
 
 
 if __name__ == '__main__':
