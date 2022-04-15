@@ -16,11 +16,12 @@ from io import BytesIO
 from collections import Counter
 import requests
 from datetime import datetime
+from pytz import timezone
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
 
-from MQTT.DoSomething import DoSomething
+from src.MQTT.DoSomething import DoSomething
 
 from picamera import PiCamera
 from time import sleep
@@ -54,7 +55,7 @@ def main(args):
             temp_chunk = array('h',temp_data)
             volume = max(temp_chunk)
         
-            if volume >= 600:
+            if volume >= 1000:
                 break
 
         # record the audio file & stop stream
@@ -84,7 +85,8 @@ def record_audio(args, p, stream):
     stream.close() 
 
     if args.store_files:
-        FILENAME = 'audio_files/{}.wav'.format(str(datetime.now()).replace(" ","_"))
+        amsterdam = timezone('Europe/Amsterdam')
+        FILENAME = 'audio_files/{}.wav'.format(str(datetime.now(amsterdam)).replace(" ","_"))
         wf = wave.open(FILENAME, 'wb')
     else:
         buffer = BytesIO()
@@ -165,17 +167,17 @@ def make_inference(tf_mfccs, tflite_path):
 
 def publish_outcome(publisher, prediction, probability):
     
-    timestamp = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+    timestamp = datetime.now(timezone('Europe/Amsterdam')).strftime("%m-%d-%Y_%H:%M:%S")
 
-    labels = ['Bark', 'Doorbell', 'Drill', 'Hammer', 'Glass', 'Speech']
+    labels = ['Bark', 'Doorbell', 'Drill', 'Glass', 'Hammer', 'Speech']
 
     body = {
         'timestamp': timestamp,
         'class': labels[int(prediction)], 
-        'confidence': round(float(probability),2)
+        'path': 'assets/storage/last_image.png'
     }
 
-    publisher.myMqttClient.myPublish("/R0001/alerts", json.dumps(body))
+    publisher.myMqttClient.myPublish("/devices/M0001", json.dumps(body))
     
 
 if __name__ == '__main__':

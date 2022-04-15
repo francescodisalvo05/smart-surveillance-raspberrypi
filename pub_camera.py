@@ -4,9 +4,10 @@ import cv2
 import json
 
 from datetime import datetime
-from MQTT.DoSomething import DoSomething
+from src.MQTT.DoSomething import DoSomething
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+from pytz import timezone
 
 import io
 
@@ -46,8 +47,8 @@ def start_recoring(publisher):
 				if weight == np.max(weights):
 					# display the detected boxes in the colour picture
 					cv2.rectangle(image, (xA, yA), (xB, yB),(0, 255, 0), 2)
-
-					timestamp = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+					amsterdam = timezone('Europe/Amsterdam')
+					timestamp = datetime.now(amsterdam).strftime("%m-%d-%Y_%H:%M:%S")
 					img_path = f'assets/storage/photo/{timestamp}.png'
 
 					cv2.imwrite(img_path, image)
@@ -59,7 +60,7 @@ def start_recoring(publisher):
 							'path': img_path 
 					}
 
-					publisher.myMqttClient.myPublish("/R0001/alerts", json.dumps(body))
+					publisher.myMqttClient.myPublish("/devices/C0001", json.dumps(body))
 
 					rawCapture.truncate(0) 
 					rawCapture.seek(0)
