@@ -125,22 +125,7 @@ class SignalGenerator:
 
         return mfccs, label
 
-    def make_dataset(self, files, train, augumentation_path):
-
-        
-        # duplicate audios for augumentation
-        if augumentation_path:
-
-            labels_to_augument = ['Bark','Crash','Door','Doorbell','Drill','Speech','Other']
-
-            # extract all the augumented files from the directory
-            for c in labels_to_augument:
-              files_from_dir = os.listdir(augumentation_path + c + '/')
-              # append the base path in order to read them lately
-              aug_files_path = [str(augumentation_path + c + '/' + f) for f in files_from_dir]
-
-              files = files + aug_files_path
-
+    def make_dataset(self, files, train):
 
         ds = tf.data.Dataset.from_tensor_slices(files)
         ds = ds.map(self.read_pad, num_parallel_calls=4)

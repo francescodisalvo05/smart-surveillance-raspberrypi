@@ -13,7 +13,7 @@ def get_data(labels, resampling, mfcc_options):
 
    generator = SignalGenerator(labels, sampling_rate=44100, resampling_rate=resampling, **mfcc_options)
    
-   train_ds = generator.make_dataset(train_files, True, None)
-   val_ds = generator.make_dataset(val_files, False, False)
+   train_ds = generator.make_dataset(train_files, True)
+   val_ds = generator.make_dataset(val_files, False)
 
    return train_ds, val_ds
