@@ -1,18 +1,15 @@
-from urllib.parse import uses_params
-from telegram.ext.callbackcontext import CallbackContext
-from datetime import datetime
 import logging
 import pandas as pd
-import time
-import requests
 import telegram
-from telegram.ext import Updater, CommandHandler
-import csv
 import os.path
 import os
 import numpy as np
-import math
-from bot_settings import * 
+
+from src.bot.bot_settings import * 
+from urllib.parse import uses_params
+from telegram.ext.callbackcontext import CallbackContext
+from datetime import datetime
+from telegram.ext import Updater, CommandHandler
 
 
 class Bot:
@@ -29,8 +26,6 @@ class Bot:
         self.logger.info("Starting BOT.")
         self.updater = Updater(self.TOKEN)
         self.dispatcher = self.updater.dispatcher
-        
-        
         
         enable_handler = CommandHandler("enable", self.send_enable)
         self.dispatcher.add_handler(enable_handler)
@@ -110,10 +105,10 @@ class Bot:
         db.set_index('ids',inplace = True)
         string = "Here is the full report:\n"
         if chat_id in db.index:
-            if not os.path.exists("bot/reports.txt"):
+            if not os.path.exists("assets/bot/reports.txt"):
                 chatbot.message.reply_text("There are no events")
             
-            reports = np.genfromtxt('bot/reports.txt',dtype='str')
+            reports = np.genfromtxt('assets/bot/reports.txt',dtype='str')
             for report in reports:
                 string += "•" + report + "\n"
             chatbot.message.reply_text(string)
@@ -133,16 +128,15 @@ class Bot:
         return 0
     
     def _read_db(self):      
-        df = pd.read_csv("bot/users.csv")
+        df = pd.read_csv("assets/bot/users.csv")
         return df
 
 
     def _update_db(self,df,index,column,value):
         df.at[index, column] = value
-        df.to_csv("bot/users.csv")
+        df.to_csv("assets/bot/users.csv")
 
 if __name__ == "__main__":
     
     BOT = Bot()
     BOT.run()
- 
