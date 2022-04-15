@@ -68,7 +68,7 @@ class Bot:
     def send_alarm(self,timestampm,input_type, label, path) -> int:
 
         reports = []
-        current_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        current_time = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
         db = self._read_db()
         db.set_index('ids',inplace = True)
 
@@ -82,10 +82,10 @@ class Bot:
                 elif input_type == 'img':
                     self._send_img(open(path, 'rb'),label,chat_id)
         
-        reports.append(current_time)
+        
         arr = np.genfromtxt('bot/reports.txt',dtype='str')
         reports = np.append(arr,str(current_time))
-        np.savetxt('reports.txt', reports, delimiter=" ", fmt="%s")
+        np.savetxt('bot/reports.txt', reports, delimiter=" ", fmt="%s")
     
 
 
