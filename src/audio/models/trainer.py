@@ -6,7 +6,7 @@ import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 
 from tensorflow import keras
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score
 
 from src.audio.utils.signal_generator import SignalGenerator
 from models.models import set_model
@@ -82,7 +82,7 @@ class Trainer():
         converter = tf.lite.TFLiteConverter.from_saved_model(self.model_path)
         converter.experimental_enable_resource_variables = True
 
-        if optimization is not None:
+        if optimization:
             converter.optimizations = optimization
 
         tflite_m = converter.convert()
@@ -91,19 +91,21 @@ class Trainer():
             fp.write(tflite_m)
 
 
-    def make_inference(self, test_ds):
-
+    def make_inference(self, ds):
+        """Used in order to evaluate the performances for each class and eventual
+        confusion among pair of classes
+        """
         interpreter = tf.lite.Interpreter(model_path=self.tflite_path)
         interpreter.allocate_tensors()
 
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
 
-        test_ds = test_ds.unbatch().batch(1)
+        ds = ds.unbatch().batch(1)
 
         predictions, labels = [], []
 
-        for x, y in test_ds:
+        for x, y in ds:
             # give the input
             interpreter.set_tensor(input_details[0]["index"], x)
             interpreter.invoke()
@@ -119,12 +121,13 @@ class Trainer():
 
         confusion_matrix = tf.math.confusion_matrix(labels, predictions)  # add names!
 
-        f1 = f1_score(labels, predictions, average='macro')
+        # validation set is balanced
+        accuracy = accuracy_score(labels, predictions)
 
-        return confusion_matrix, f1
+        return confusion_matrix, accuracy
 
 
-    def plot_stats(self, cm, MFCC_OPTIONS, labels, resampling_rate):
+    def plot_stats(self, cm, labels):
 
         print("\n ==== STATS ====")
 
