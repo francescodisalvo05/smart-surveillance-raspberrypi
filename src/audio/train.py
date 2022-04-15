@@ -30,7 +30,7 @@ def main(args):
 
     labels = ['Bark', 'Doorbell', 'Drill', 'Glass', 'Hammer', 'Speech']
 
-    train_ds, val_ds, test_ds = get_data(
+    train_ds, val_ds = get_data(
         labels=labels,
         mfcc_options=MFCC_OPTIONS,
         resampling=resampling_rate)
@@ -51,10 +51,6 @@ def main(args):
     model.train_model(train_ds, val_ds, learning_rate, input_shape, epochs)
     model.save_tf('./assets/audio/models_tf')
     model.save_tflite(f'./assets/audio/models_tflite/{args.model_name}.tflite')
-
-    if test_ds:
-        cm, f1_score = model.make_inference(test_ds) 
-        model.plot_stats(f1_score, cm, MFCC_OPTIONS, labels, resampling_rate)
 
 
 if __name__ == '__main__':
