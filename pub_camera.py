@@ -9,8 +9,6 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 from pytz import timezone
 
-import io
-
 
 def start_recoring(publisher):
 
@@ -71,6 +69,7 @@ def start_recoring(publisher):
 			rawCapture.seek(0)
 
 
+# source : https://pyimagesearch.com/2015/02/16/faster-non-maximum-suppression-python/
 def _non_max_suppression_fast(boxes, overlapThresh):
 	# if there are no boxes, return an empty list
 	if len(boxes) == 0:
