@@ -169,7 +169,7 @@ if __name__ == '__main__':
     parser.add_argument('--chunk', type=int, default=4410, help='Set number of chunks')
     parser.add_argument('--seconds', type=float, default=2, help='Set the length of the recording (seconds)')
     parser.add_argument('--rate', type=int, default=44100, help='Set the rate')
-    parser.add_argument('--tflite_path', type=str, default='assets/audio/model_tflite/model.tflite', help='tflite_path')
+    parser.add_argument('--tflite_path', type=str, default='assets/audio/models_tflite/model.tflite', help='tflite_path')
     parser.add_argument('--store_files', type=bool, default=False, help='Store the recorded audio files')
     
     args = parser.parse_args()
