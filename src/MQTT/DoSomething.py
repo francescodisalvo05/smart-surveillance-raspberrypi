@@ -1,9 +1,12 @@
-from MQTT.MyMQTT import MyMQTT
-from bot.botds import Bot
+from src.MQTT.MyMQTT import MyMQTT
+from src.bot.botmessage import Bot
+
+import time
 
 class DoSomething():
     def __init__(self, clientID):
         # create an instance of MyMQTT class
+        self.last_alarm = time.time() - 10000 # enough for the window
         self.bot = Bot(True)
         self.clientID = clientID
         self.myMqttClient = MyMQTT(self.clientID, "test.mosquitto.org", 1883, self)
