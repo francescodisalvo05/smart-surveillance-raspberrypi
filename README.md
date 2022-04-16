@@ -1,7 +1,7 @@
 # Smart Surveillance on RaspberryPi
 
 <p align="center">
-  <img height="270" src="assets/readme_utils/human_detection.gif">
+  <img src="assets/readme_utils/human_detection.gif">
 </p>
 
 ### Contents
