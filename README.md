@@ -1,5 +1,10 @@
 # Smart Surveillance on RaspberryPi
 
+
+## Description
+The vast majority of modern surveillance solutions involve a camera and motion sensors, and just a few of them **use artificial intelligence algorithms**. In this context, we decided to build an **indoor video surveillance system** capable of **recognizing the presence of a human intrusion**, rather than mere movement. In this way, a photo of the intruder can be taken instantly, eliminating the burden of reviewing the footage.
+
+
 ### How to run it
 
 1. Setup your RaspberryPi
