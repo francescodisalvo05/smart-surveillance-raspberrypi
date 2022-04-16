@@ -84,7 +84,7 @@ python sub_bot.py
 
 ### Demo
 
-You can find some audio/video demos [here](assets/utils_readme)
+You can find some audio/video demos [here](assets/readme_utils)
 
 
 
@@ -94,7 +94,7 @@ You can find some audio/video demos [here](assets/utils_readme)
 ### Report
 
 
-Do you wanna know more? Please have a look at our [presentation](url) or our technical [report](url)
+Do you wanna know more? Please have a look at our [presentation](url) or our technical [report](url)!
 
 
 <a name="contributors" />
