@@ -94,7 +94,7 @@ You can find some audio/video demos [here](assets/readme_utils)
 ### Report
 
 
-Do you wanna know more? Please have a look at our [presentation](url) or our technical [report](url)!
+Do you wanna know more? Please have a look at our [presentation](https://github.com/francescodisalvo05/smart-surveillance-raspberrypi/blob/main/assets/files/Slides_SSSRP.pdf) or our technical [report](https://github.com/francescodisalvo05/smart-surveillance-raspberrypi/blob/main/assets/files/Smart_Surveillance_System_on_Raspberry_Pi.pdf)!
 
 
 <a name="contributors" />
